@@ -1,0 +1,31 @@
+.main {
+  display: flex;
+  border-bottom: 2px solid rgb(190, 190, 190);
+  background-color: white;
+  width: 100%;
+}
+
+.left_side {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+}
+
+.right_side {
+  display: flex;
+  flex-grow: 1;
+  justify-content: end;
+  align-items: center;
+}
+
+.mainMenu {
+  width: 35px;
+  height: 35px;
+  margin: 0px 0px 0px 30px;
+  text-decoration: none;
+}
+
+.mainMenu:hover {
+  background-color: rgb(212, 212, 212);
+  cursor: pointer;
+}

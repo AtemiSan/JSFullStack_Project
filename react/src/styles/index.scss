@@ -1,0 +1,10 @@
+@import './clear.scss';
+
+html, body, #root {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+body {
+  background: rgb(33, 33, 136);
+}

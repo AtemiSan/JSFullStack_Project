@@ -1,0 +1,35 @@
+.title {
+  font-size: 16pt;
+  font-weight: bold;
+  margin: 10px 30px;
+}
+
+.round_btn {
+  border-radius: 30px;
+  border-color: rgb(190, 190, 190);
+  border-style: solid;
+  width: 30px;
+  height: 30px;
+  margin: 0px 30px;
+  text-decoration: none;
+  &:hover {
+    background-color: rgb(212, 212, 212);
+    cursor: pointer;
+  }
+  img {
+    border-radius: 20px;
+  }
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgb(190, 190, 190);
+  background-color: rgb(250, 166, 132);
+  border-radius: 20px;
+  font-weight: bold;
+  margin: 10px 0px;
+  padding: 0px 10px;
+  min-height: 40px;
+  box-sizing: border-box;
+}

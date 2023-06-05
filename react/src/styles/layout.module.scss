@@ -1,0 +1,35 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  max-width: 900px;
+}
+
+.body {
+  display: flex;
+  flex-grow: 11;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.left_side {
+  flex-grow: 1;
+  height: 100%;
+  background-color: white;
+  border: 2px solid rgb(190, 190, 190);
+  border-width: 0px 2px;
+  box-sizing: border-box;
+}
+
+.right_side {
+  flex-grow: 5;
+  height: 100%;
+  background-color: white;
+  border-right: 2px solid rgb(190, 190, 190);
+  box-sizing: border-box;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+
