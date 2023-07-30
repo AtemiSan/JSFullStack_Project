@@ -23,6 +23,9 @@ export function AppBar({}: IAppBarProps) {
   return (
     <div className={classes.main}>
       <div className={classes.left_side}>
+        <div className={classes.mainMenu} onClick = {() => {}}>
+          <img src={menu}></img>
+        </div>
         <div className={common.title}>Аренда переговорных</div>
       </div>
       <div className={classes.right_side}>
@@ -33,9 +36,4 @@ export function AppBar({}: IAppBarProps) {
       </div>
     </div>
   )
-/*
-        <div className={classes.mainMenu} onClick = {() => {}}>
-          <img src={menu}></img>
-        </div>
-/* */
 }
