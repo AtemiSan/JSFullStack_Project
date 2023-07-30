@@ -9,6 +9,7 @@ import { CreateOrderPage } from './pages/CreateOrderPage'
 import { RegistrationPage } from './pages/RegistrationPage'
 import { AgreementPage } from './pages/AgreementPage'
 import { ProfileChangePasswPage } from './pages/ProfileChangePasswPage'
+import { OrderPage } from './pages/OrderPage'
 
 function App() {
   return (
@@ -18,12 +19,18 @@ function App() {
         <Route path='profile' element={<ProfilePage />} />
         <Route path='changePassw' element={<ProfileChangePasswPage />} />
         <Route index element={<MyOrdersPage />} />
+        <Route path="order" element={<OrderPage/>} />   
+                
         <Route path='create_order' element={<CreateOrderPage />} />
         <Route path='registration' element={<RegistrationPage />} />
         <Route path='agreement' element={<AgreementPage />} />
-      </Route>
+     
+      </Route>   
     </Routes>
   );
 }
+//<Route path=":orderId" element={<OrderPage/>} />        
 
 export default App;
+
+

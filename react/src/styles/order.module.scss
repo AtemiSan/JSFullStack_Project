@@ -2,11 +2,12 @@
   display: flex;
   flex-direction: column;
   width: 90%;
-  border: 2px solid rgb(190, 190, 190);
+  border: 2px solid black; //(190, 190, 190);
   border-radius: 15px;
   background-color: white;
   margin: 5%;
   box-sizing: border-box;
+  font-family: Roboto, sans-serif;
   &:hover {
     cursor: pointer;
     background-color: rgb(212, 212, 212);
@@ -17,4 +18,26 @@
 
 .item {
   margin: 10px 20px;
+}
+
+.buttons{
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.button{
+  border: 2px solid black; //rgb(190, 190, 190);
+  border-radius: 10px;
+  margin: 1%;
+  padding: 5px 15px 5px 15px;
+  &:hover {
+    cursor: pointer;
+    background-color: #173e43;  // rgb(161, 162, 163);
+    color: white;
+  }
+}
+
+.button_nodisplay{
+    display: none;
 }

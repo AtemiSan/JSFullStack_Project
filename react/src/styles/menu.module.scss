@@ -7,17 +7,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid rgb(190, 190, 190);
+  border: 2px solid #dddfd4; //rgb(190, 190, 190);
   border-width: 2px 0px;
   font-weight: bold;
-  background-color: rgb(250, 231, 125);
+  background-color: #fae596;  //rgb(250, 231, 125);
   height: 40px;
   box-sizing: border-box;
   margin: 0px 10px;
 }
 
 .btn:hover {
-  background-color: rgb(212, 212, 212);
+  background-color: #3fb0ac;  //rgb(212, 212, 212);
   cursor: pointer;
 }
 
+.nodisplay {
+  display: none;
+}

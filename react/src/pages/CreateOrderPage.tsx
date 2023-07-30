@@ -1,24 +1,29 @@
 import { useState } from 'react';
 import common from '../styles/common.module.scss';
 import classes from '../styles/profile.module.scss';
+import { getFreeBuiding, getFreeCabinets } from '../functions/avialable';
 
 export interface ICreateOrderPageProps {
 
 }
 
-export function CreateOrderPage({}: ICreateOrderPageProps) {
+export function CreateOrderPage({ }: ICreateOrderPageProps) {
 
-  const [dtTime, setDtTime] = useState('');
+  const [dtTimeF, setDtTimeF] = useState('');
+  const [dtTimeT, setDtTimeT] = useState('');  
   const [seatingPlaces, setSeatingPlaces] = useState('');
   const [hasProjector, setHasProjector] = useState(false);
   const [hasInternet, setHasInternet] = useState(false);
 
-  const handleChangeDtTime = (e: React.FormEvent<HTMLInputElement>) => {
-    setDtTime(e.currentTarget.value);
+  const handleChangeDtTimeF = (e: React.FormEvent<HTMLInputElement>) => {
+    setDtTimeF(e.currentTarget.value);
+  }
+  const handleChangeDtTimeT = (e: React.FormEvent<HTMLInputElement>) => {
+    setDtTimeT(e.currentTarget.value);
   }
 
   const handleChangeSeatingPlaces = (e: React.FormEvent<HTMLInputElement>) => {
-//    if (e.currentTarget.value[e.currentTarget.value.length()-1] )
+    //    if (e.currentTarget.value[e.currentTarget.value.length()-1] )
     setSeatingPlaces(e.currentTarget.value);
   }
 
@@ -35,18 +40,27 @@ export function CreateOrderPage({}: ICreateOrderPageProps) {
     alert('Заявка отправлена');
   }
 
+  // списов свободных зданий
+  const places = getFreeBuiding();
+  // список свободных кабинетов
+  const cabinets = getFreeCabinets();
+
   return (
     <div className={classes.main}>
       <div className={classes.card}>
         <div className={common.title}>Подать заявку</div>
         <form className={classes.form} onSubmit={handleSubmit}>
-        <label>
-            Дата и время
-            <input className={classes.input} type='datetime-local' value={dtTime} onChange={handleChangeDtTime} required />
+          <label>
+            Дата и время начала
+            <input className={classes.input} type='datetime-local' value={dtTimeF} onChange={handleChangeDtTimeF} required />
+          </label>
+          <label>
+            Дата и время окончания
+            <input className={classes.input} type='datetime-local' value={dtTimeT} onChange={handleChangeDtTimeT} required />
           </label>
           <label>
             Количество человек
-            <input className={classes.input} type='number' placeholder='Количество человек' value={seatingPlaces} onChange={handleChangeSeatingPlaces} />
+            <input className={classes.input} type='number' placeholder='Количество человек' value={seatingPlaces} onChange={handleChangeSeatingPlaces} required/>
           </label>
           <label className={classes.block}>
             <input className={classes.checkbox} type='checkbox' checked={hasProjector} onChange={handleChangeHasProjector} />
@@ -59,21 +73,17 @@ export function CreateOrderPage({}: ICreateOrderPageProps) {
           <label>
             Здание
             <select className={classes.input} required>
-              <option selected disabled>Здание</option>
-              <option value="1">Здание 1</option>
-              <option value="2">Здание 2</option>
-              <option value="3">Здание 3</option>
+            <option selected disabled></option>
+              {places.map(item => <option value={item.id}> {item.Building} </option>)}
             </select>
-          </label>    
+          </label>
           <label>
             Кабинет
             <select className={classes.input} required>
-              <option selected disabled>Кабинет</option>
-              <option value="1">№215</option>
-              <option value="2">№135</option>
-              <option value="3">№114</option>
+              <option selected disabled></option>
+              {cabinets.map(item => <option value={item.id}> {item.Cabinet} </option>)}
             </select>
-          </label>    
+          </label>
 
           <input className={classes.btn} type='submit' name='submit' value='Отправить' />
         </form>
