@@ -1,0 +1,13 @@
+
+
+
+api/public/auth/login
+api/public/data/getDolgList
+api/public/data/getDepartList
+api/public/data/getRoleList
+
+api/user/auth/changePassw
+api/user/auth/getProfile
+api/user/order/register
+
+api/admin/auth/register

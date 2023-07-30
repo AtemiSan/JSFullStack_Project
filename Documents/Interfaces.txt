@@ -1,0 +1,85 @@
+
+
+
+ILoginRequest {
+  sEmail: string
+  sPassw: string
+}
+
+ILoginResponse {
+  sFam: string
+  sName: string
+  sOtch: string
+  idDolg: number
+  sDolg: string
+  idDep: number
+  sDep: string
+  idRole: number
+  sRole: string
+}
+
+IRegisterUserRequest {
+  sFam: string
+  sName: string
+  sOtch: string
+  sPhone: string
+  sEmail: string
+  sPassw: string
+  idDolg: number
+  idDep: number
+  idRole: number  	
+}
+
+registerUserResponse - успех если получен код ответа 200
+
+IDolgnost {
+  idDolg: number
+  sDolg: string
+}
+
+IDolgListResponse = Array<IDolgnost>
+
+IDepartment {
+  idDep: number
+  sDDep: string
+}
+
+IDepListResponse = Array<IDepartment>
+
+IRole {
+  idRole: number
+  sRole: string
+}
+
+IRoleListResponse = Array<IRole>
+
+IChangePasswRequest {
+  sOldPassw: string
+  sNewPassw: string
+}
+
+changePasswResponse - успех если получен код ответа 200
+
+IProfileResponse {
+  sFam: string
+  sName: string
+  sOtch: string
+  sPhone: string
+  sEmail: string
+  idDolg: number
+  sDolg: string
+  idDep: number
+  sDep: string
+  idRole: number
+  sRole: number  	
+}
+
+IRegisterOrderRequest {
+  dtBegin: number            // timestamp
+  dtEnd: number
+  sComment: string
+  iSeatingPlaces: number
+  bHasProjector: boolean
+  bHasInternet: boolean
+  idRoom: number
+}
