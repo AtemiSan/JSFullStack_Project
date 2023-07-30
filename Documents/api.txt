@@ -12,11 +12,13 @@ post	api/user/order/exec						добавление заявки IRegisterOrderRe
 get		api/user/order/exec						получение заявки IOrderRequest / IOrderResponse
 delete	api/user/order/exec						удаление заявки IOrderDeleteRequest / Response 200
 post	api/user/order/getList					IOrderListRequest / IOrderListResponse
-post	api/user/order/changeStatus				IOrderChangeStatusRequest / Response 200
+post	api/user/order/changeStatus				IOrderChangeStatusRequest / Response 200  (не забыть добавить проверку статуса, данным запросом нельзя согласовать)
 post	api/user/room/exec						добавление переговорной IRegisterRoomRequest / Response 200
 get		api/user/room/exec						получение переговорной IRoomRequest / IRoomResponse
 delete	api/user/room/exec						удаление переговорной IRoomDeleteRequest / Response 200
 post	api/user/room/getList					IRoomListRequest / IRoomListResponse
+post	api/user/agreement/getList				IOrderAgreementListRequest / IOrderListResponse
+post	api/user/agreement/exec					Согласовать / отклонить IOrderAgreementRequest / Response 200
 
 post	api/admin/user/exec						добавление пользователя IRegisterUserRequest / Response 200
 get		api/admin/user/exec						получение пользователя IUserRequest / IUserResponse

@@ -43,6 +43,7 @@ IOrder {
   bHasInternet: boolean
   room: IRoom
   status: IStatus
+  userAgreement: IUser
   bDel: boolean
 }
 
@@ -207,7 +208,7 @@ IRoomResponse extends IRoom {
 }
 
 IRoomDeleteRequest {
-  idOrder: number
+  idRoom: number
 }
 
 RoomDeleteResponse - успех если получен код ответа 200
@@ -222,4 +223,22 @@ IRoomListRequest extends IPageRequest {
 }
 
 IRoomListResponse = Array<IRoom>
+
+IOrderAgreementFilters {
+  active: boolean           // true - вернуть активные (добавить в запрос status = на согласовании)
+  rejected: boolean         // true - вернуть отклонённые (добавить в запрос status = отклонённые)
+  agreemented: boolean		// true - вернуть все согласованные (добавить в запрос status = согласованные)
+  agreementedByMe: boolean	// true - вернуть все согласованные этим согласующим (добавить в запрос status = согласованные + проверка согласующего)
+}
+
+IOrderAgreementListRequest extends IPageRequest {
+  filters: IOrderAgreementFilters
+}
+
+IOrderAgreementRequest {
+  idOrder: number
+  idStatus: number
+}
+
+OrderAgreementResponse - успех если получен код ответа 200
 
