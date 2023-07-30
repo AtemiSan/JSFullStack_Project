@@ -1,13 +1,25 @@
 
 
 
-api/public/auth/login
-api/public/data/getDolgList
-api/public/data/getDepartList
-api/public/data/getRoleList
+post	api/public/auth/login					ILoginRequest / ILoginResponse
+post	api/public/data/getDolgList				RequestNoParams / IDolgListResponse
+post	api/public/data/getDepartList			RequestNoParams / IDepListResponse
+post	api/public/data/getRoleList				RequestNoParams / IRoleListResponse
 
-api/user/auth/changePassw
-api/user/auth/getProfile
-api/user/order/register
+post	api/user/auth/changePassw				IChangePasswRequest / Response 200
+post	api/user/auth/getProfile				RequestNoParams / IProfileResponse
+post	api/user/order/exec						добавление заявки IRegisterOrderRequest / Response 200
+get		api/user/order/exec						получение заявки IOrderRequest / IOrderResponse
+delete	api/user/order/exec						удаление заявки IOrderDeleteRequest / Response 200
+post	api/user/order/getList					IOrderListRequest / IOrderListResponse
+post	api/user/order/changeStatus				IOrderChangeStatusRequest / Response 200
+post	api/user/room/exec						добавление переговорной IRegisterRoomRequest / Response 200
+get		api/user/room/exec						получение переговорной IRoomRequest / IRoomResponse
+delete	api/user/room/exec						удаление переговорной IRoomDeleteRequest / Response 200
+post	api/user/room/getList					IRoomListRequest / IRoomListResponse
 
-api/admin/auth/register
+post	api/admin/user/exec						добавление пользователя IRegisterUserRequest / Response 200
+get		api/admin/user/exec						получение пользователя IUserRequest / IUserResponse
+put		api/admin/user/exec						редактирование пользователя IUserUpdateRequest / Response 200
+delete	api/admin/user/exec						удаление пользователя IUserDeleteRequest / Response 200
+post	api/admin/user/getList					IUserListRequest / IUserListResponse

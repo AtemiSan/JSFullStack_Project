@@ -41,7 +41,7 @@ export function RegistrationPage({}: IRegistrationPageProps) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+    alert('Пользователь зарегистрирован');
   }
 
   return (
