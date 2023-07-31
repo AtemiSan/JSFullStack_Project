@@ -22,10 +22,10 @@ export interface IDepartment {
   sDDep: string
 }
 
-/*export interface IRole {
+export interface IRole1 {
   idRole: number
   sRole: string
-}*/
+}
 
 export interface IStatus {
   idStatus: number

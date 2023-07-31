@@ -1,4 +1,3 @@
-import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material';
 import classes from '../styles/order.module.scss';
 import { IOrder } from '../model/Order';
 import { useNavigate } from 'react-router-dom';
@@ -55,8 +54,14 @@ export function Order(props: IOrder, role: IRole) { //IOrderProps) {
   return (
     <div className={classes.card}>
       <div className={classes.item}>Время аренды: {getFormatedDate(props.dtBegin)} - {getFormatedDate(props.dtEnd)}</div>
-      <div className={classes.item}>Здание :             {props.room.sAddress}</div>  
+      <div className={classes.item}>Здание : {props.room.sAddress}</div>  
       <div className={classes.item}>Помещение :           {props.room.sCabinet}</div>
+      <div className={classes.item}>
+        <a>Количество человек: <a> </a>{props.iSeatingPlaces}</a><a> </a>
+        <a>Наличие проектора <input className={classes.checkbox} type='checkbox' checked={props.bHasProjector}/></a><a> </a>
+        <a>Наличие интернета <input className={classes.checkbox} type='checkbox' checked={props.bHasInternet}/></a>
+        </div>
+        <div className={classes.item}>Комментарий: <a> </a> {props.sComment}</div>  
       <div className={classes.item}>Статус согласования : {props.status.sStatus}</div>
       <div className={classes.buttons}> 
         {ButtonsOrder.map(item =>

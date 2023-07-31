@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import common from '../styles/common.module.scss';
 import classes from '../styles/profile.module.scss';
-import { IOrder } from '../model/Order';
+import { IOrderData } from '../model/Order';
 import { getFreeBuiding, getFreeCabinets } from '../functions/avialable';
 
-export function OrderMain(props: IOrder) {
+export function OrderMain(props: IOrderData) {
 
   //const [dtTime, setDtTime] = useState(''); //{getFormatedDate(props.dtTime_from)}
   const [dtTimeF, setDtTimeF] = useState('');

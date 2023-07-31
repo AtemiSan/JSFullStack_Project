@@ -50,14 +50,14 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
       <div className={classes.card}>
         <div className={common.title}>Подать заявку</div>
         <form className={classes.form} onSubmit={handleSubmit}>
-          <label>
-            Дата и время начала
+          <label >
+            Дата и время начала 
             <input className={classes.input} type='datetime-local' value={dtTimeF} onChange={handleChangeDtTimeF} required />
           </label>
           <label>
             Дата и время окончания
             <input className={classes.input} type='datetime-local' value={dtTimeT} onChange={handleChangeDtTimeT} required />
-          </label>
+          </label>            
           <label>
             Количество человек
             <input className={classes.input} type='number' placeholder='Количество человек' value={seatingPlaces} onChange={handleChangeSeatingPlaces} required/>
@@ -84,7 +84,10 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
               {cabinets.map(item => <option value={item.id}> {item.Cabinet} </option>)}
             </select>
           </label>
-
+          <label>
+            Комментарий
+            <input className={classes.input} type='string' placeholder='Комментарий' value={seatingPlaces} onChange={handleChangeSeatingPlaces} />
+          </label>          
           <input className={classes.btn} type='submit' name='submit' value='Отправить' />
         </form>
       </div>

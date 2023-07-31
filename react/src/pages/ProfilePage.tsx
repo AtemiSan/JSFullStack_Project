@@ -2,6 +2,7 @@ import classes from '../styles/profile.module.scss';
 import common from '../styles/common.module.scss';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getDepartments, getDolgnosts } from '../functions/referenceFunc';
 
 export interface IProfilePageProps {
 
@@ -51,6 +52,9 @@ export function ProfilePage({}: IProfilePageProps) {
     setEmail(localStorage.getItem('email') ? String(localStorage.getItem('email')) : '');
   }, [])
 
+  const dolgnosts = getDolgnosts();
+  const departments = getDepartments();
+  
   let save_btn;
   if (role) {
     save_btn = <input className={classes.btn} type='submit' name='submit' value='Сохранить' />;
@@ -85,19 +89,15 @@ export function ProfilePage({}: IProfilePageProps) {
           <label>
             Должность
             <select className={classes.input} required>
-              <option selected disabled>Должность</option>
-              <option value="1">Инженер</option>
-              <option value="2">Мастер</option>
-              <option value="3">Начальник</option>
+              <option selected disabled></option>
+              {dolgnosts.map(item => <option value={item.idDolg}> {item.sDolg} </option>)}
             </select>
           </label>    
           <label>
             Подразделение
             <select className={classes.input} required>
-              <option selected disabled>Подразделение</option>
-              <option value="1">Отдел сопровождения ИС</option>
-              <option value="2">Отдел разработки ИС</option>
-              <option value="3">Отдел внедрения ИС</option>
+              <option selected disabled></option>
+              {departments.map(item => <option value={item.idDep}> {item.sDDep} </option>)}
             </select>
           </label>    
 

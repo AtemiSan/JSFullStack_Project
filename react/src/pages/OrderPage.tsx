@@ -63,14 +63,13 @@ const row = getOrder(id)
             idOrder={row.idOrder}
             dtBegin={row.dtBegin} 
             dtEnd={row.dtEnd} 
-            room={row.room} 
+            sAdress={row.sAdress} 
+            sCabinet={row.sCabinet}
             iSeatingPlaces={row.iSeatingPlaces}
             status={row.status} 
             sComment={row.sComment}
             bHasProjector={row.bHasProjector}
             bHasInternet={row.bHasInternet}
-           
-            bDel={row.bDel}
             />
           <input className={classes.btn} type='submit' name='submit' value='Отправить' />
         </form>
@@ -84,3 +83,5 @@ const row = getOrder(id)
             sCabinet={row.sCabinet} */
 
             // userAgreement={row.userAgreement}
+
+            //room={row.room}

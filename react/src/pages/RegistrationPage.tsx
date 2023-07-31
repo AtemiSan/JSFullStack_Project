@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import common from '../styles/common.module.scss';
 import classes from '../styles/profile.module.scss';
+import { getDepartments, getDolgnosts, getRoles } from '../functions/referenceFunc';
 
 export interface IRegistrationPageProps {
 
@@ -44,6 +45,10 @@ export function RegistrationPage({}: IRegistrationPageProps) {
     alert('Пользователь зарегистрирован');
   }
 
+  const roles = getRoles();
+  const dolgnosts = getDolgnosts();
+  const departments = getDepartments();
+
   return (
     <div className={classes.main}>
       <div className={classes.card}>
@@ -76,21 +81,24 @@ export function RegistrationPage({}: IRegistrationPageProps) {
           <label>
             Должность
             <select className={classes.input} required>
-              <option selected disabled>Должность</option>
-              <option value="1">Инженер</option>
-              <option value="2">Мастер</option>
-              <option value="3">Начальник</option>
+              <option selected disabled></option>
+              {dolgnosts.map(item => <option value={item.idDolg}> {item.sDolg} </option>)}
             </select>
           </label>    
           <label>
             Подразделение
             <select className={classes.input} required>
-              <option selected disabled>Подразделение</option>
-              <option value="1">Отдел сопровождения ИС</option>
-              <option value="2">Отдел разработки ИС</option>
-              <option value="3">Отдел внедрения ИС</option>
+              <option selected disabled></option>
+              {departments.map(item => <option value={item.idDep}> {item.sDDep} </option>)}
             </select>
-          </label>    
+          </label>   
+          <label>
+            Роль
+            <select className={classes.input} required>
+            <option selected disabled></option>
+              {roles.map(item => <option value={item.idRole}> {item.sRole} </option>)}
+            </select>
+          </label>             
 
           <input className={classes.btn} type='submit' name='submit' value='Зарегистрировать' />
         </form>

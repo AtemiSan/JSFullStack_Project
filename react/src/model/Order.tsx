@@ -1,14 +1,17 @@
 import { IRoom, IStatus, IUser } from "./reference";
 
-/*export interface IOrderData {
-  id: number;  // string
-  dtTime_from: Date;
-  dtTime_to: Date;
+export interface IOrderData {
+  idOrder: number;  // string
+  dtBegin: Date;
+  dtEnd: Date;
+  sComment: string
+  iSeatingPlaces: number
+  bHasProjector: boolean
+  bHasInternet: boolean  
   sAdress: string;
   sCabinet: string;
-  seatingPlaces: number;
-  sState: string;
-}*/
+  status: string;
+}
 
 
 export interface IOrder {

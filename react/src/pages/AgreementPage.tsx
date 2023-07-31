@@ -23,16 +23,16 @@ export function AgreementPage({ }: IAgreementPageProps) {
       </div>
       {rows.map(item =>
         <Order
-        idOrder={rows.idOrder}
-        dtBegin={rows.dtBegin} 
-        dtEnd={rows.dtEnd} 
-        room={rows.room} 
-        iSeatingPlaces={rows.iSeatingPlaces}
-        status={rows.status}
-        sComment={rows.sComment}
-        bHasProjector={rows.bHasProjector}
-        bHasInternet={rows.bHasInternet}
-        bDel={rows.bDel}           
+        idOrder={item.idOrder}
+        dtBegin={item.dtBegin} 
+        dtEnd={item.dtEnd} 
+        room={item.room} 
+        iSeatingPlaces={item.iSeatingPlaces}
+        status={item.status}
+        sComment={item.sComment}
+        bHasProjector={item.bHasProjector}
+        bHasInternet={item.bHasInternet}
+        bDel={item.bDel}           
         />)}     
     </>
   )
