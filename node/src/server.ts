@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 
 dotenv.config({
-    path: `${__dirname}/env/.${process.env.NODE_ENV}.env`
+  path: `${__dirname}/env/.${process.env.NODE_ENV}.env`
 })
 
 import express from "express";
@@ -15,19 +15,19 @@ import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 const app = express();
 
 passport.use(
-    new JwtStrategy(
-        {
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-            secretOrKey: process.env.JWT_SECRET
-        },
-        (user, done) => {
-            done(null, user);
-        }
-    )
+  new JwtStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+        secretOrKey: process.env.JWT_SECRET
+    },
+    (user, done) => {
+      done(null, user);
+    }
+  )
 )
 
 passport.serializeUser((user: any, done) => {
-    done(null, user.userId)
+  done(null, user.idUser)
 })
 
 app.use(cookieParser());
@@ -41,15 +41,16 @@ app.use(ErrorMiddleware);
 const PORT = process.env.PORT || 8080;
 
 async function start() {
-    try {
-        await sequelize.sync({alter: false, force: false});
-        console.log('[OK] Secuelize synced!');
+  try {
+    await sequelize.sync({alter: false, force: false});
+    console.log('[OK] Secuelize synced!');
 
-        app.listen(PORT);
-        console.log(`[OK] Server is started on port ${PORT}`);
-    } catch(e) {
-        console.log('[ERR] Seerver failed');
-    }
+    app.listen(PORT);
+    console.log(`[OK] Server is started on port ${PORT}`);
+
+  } catch(e) {
+    console.log('[ERR] Seerver failed');
+  }
 }
 
 start();

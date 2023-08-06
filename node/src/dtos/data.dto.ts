@@ -1,3 +1,4 @@
+import Role from "../models/role.model"
 
 
 export interface IDolgnost {
@@ -7,7 +8,7 @@ export interface IDolgnost {
 
 export interface IDepartment {
   idDep: number
-  sDDep: string
+  sDep: string
 }
 
 export interface IRole {
@@ -26,14 +27,17 @@ export interface IRoom {
   sAddress: string
   sCabinet: string
   iSeatingPlaces: number
-  bHasProjector: boolean
-  bHasInternet: boolean
+  bHasProjector: number
+  bHasInternet: number
   status: IStatus
   dtInEnable: Date            
-  bDel: boolean
+  dtIns: Date
+  dtUpd: Date
+  dtDel: Date
 }
 
 export interface IUser {
+  idUser: number
   sFam: string
   sName: string
   sOtch: string
@@ -42,7 +46,9 @@ export interface IUser {
   dolg: IDolgnost
   dep: IDepartment
   role: IRole
-  bDel: boolean
+  dtIns: Date
+  dtUpd: Date
+  dtDel: Date
 }
 
 export interface IOrder {
@@ -51,12 +57,14 @@ export interface IOrder {
   dtEnd: Date
   sComment: string
   iSeatingPlaces: number
-  bHasProjector: boolean
-  bHasInternet: boolean
+  bHasProjector: number
+  bHasInternet: number
   room: IRoom
   status: IStatus
   userAgreement: IUser
-  bDel: boolean
+  dtIns: Date
+  dtUpd: Date
+  dtDel: Date
 }
 
 export interface IPageRequest {
@@ -74,4 +82,9 @@ export interface IDepListResponse extends Array<IDepartment> {
 
 export interface IRoleListResponse extends Array<IRole> {
 
+}
+
+export interface IUserToken {
+  idUser: number,
+  role: Role
 }

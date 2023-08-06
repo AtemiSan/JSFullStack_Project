@@ -1,20 +1,21 @@
-import { Request, Response, NextFunction } from "express";
-import userService from "../services/user.service";
+import { Response, Request, NextFunction } from "express";
+import roomService from "../services/room.service";
+import { IUserToken } from "../dtos/data.dto";
 
 
-class CUserController {
+class CRoomController {
 
   //================================================================================================================================================================================
-  async getUser(req: Request, res: Response, next: NextFunction) {
+  async getRoom(req: Request, res: Response, next: NextFunction) {
     try {
       if (req.body) {
-        const user = await userService.getUser(req.body);
-        if (user)
-          res.json(user);
+        const room = await roomService.getRoom(req.body);
+        if (room)
+          res.json(room);
         else
           res.status(400).json({ message: "В выполнении операции отказано." });
       } else {
-        console.log('CUserController.getUser: Пустой request.body');
+        console.log('CRoomController.getRoom: Пустой request.body');
         res.status(400).json({ message: "В выполнении операции отказано." });
       }
     
@@ -24,16 +25,16 @@ class CUserController {
   }
 
   //================================================================================================================================================================================
-  async registerUser(req: Request, res: Response, next: NextFunction) {
+  async registerRoom(req: Request, res: Response, next: NextFunction) {
     try {
       if (req.body) {
-        const success = await userService.registerUser(req.body);
+        const success = await roomService.registerRoom(req.body);
         if (success)
-          return res.status(201).json({ message: "Пользователь зарегистрирован." });
+          return res.status(201).json({ message: "Переговорная зарегистрирована." });
         else
           res.status(400).json({ message: "В выполнении операции отказано." });
       } else {
-        console.log('CUserController.registerUser: Пустой request.body');
+        console.log('CRoomController.registerRoom: Пустой request.body');
         res.status(400).json({ message: "В выполнении операции отказано." });
       }
 
@@ -43,16 +44,16 @@ class CUserController {
   }
 
   //================================================================================================================================================================================
-  async updateUser(req: Request, res: Response, next: NextFunction) {
+  async updateRoom(req: Request, res: Response, next: NextFunction) {
     try {
       if (req.body) {
-        const user = await userService.updateUser(req.body);
-        if (user)
-          res.json(user);
+        const room = await roomService.updateRoom(req.body);
+        if (room)
+          res.json(room);
         else
           res.status(400).json({ message: "В выполнении операции отказано." });
       } else {
-        console.log('CUserController.updateUser: Пустой request.body');
+        console.log('CRoomController.updateRoom: Пустой request.body');
         res.status(400).json({ message: "В выполнении операции отказано." });
       }
 
@@ -62,16 +63,16 @@ class CUserController {
   }
 
   //================================================================================================================================================================================
-  async deleteUser(req: Request, res: Response, next: NextFunction) {
+  async deleteRoom(req: Request, res: Response, next: NextFunction) {
     try {
       if (req.body) {
-        const success = await userService.deleteUser(req.body);
+        const success = await roomService.deleteRoom(req.body);
         if (success)
-          return res.status(200).json({ message: 'Пользователь удалён.' })
+          return res.status(200).json({ message: 'Заявка удалена.' })
         else
           res.status(400).json({ message: "В выполнении операции отказано." });
       } else {
-        console.log('CUserController.deleteUser: Пустой request.body');
+        console.log('CRoomController.deleteRoom: Пустой request.body');
         res.status(400).json({ message: "В выполнении операции отказано." });
       }
 
@@ -83,14 +84,14 @@ class CUserController {
   //================================================================================================================================================================================
   async getList(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body) {
-        const users = await userService.getList(req.body);
-        if (users)
-          res.json(users);
-        else
-          res.status(400).json({ message: "В выполнении операции отказано." });
+      if (req.body && req.user) {
+        const rooms = await roomService.getList(req.user as IUserToken, req.body);
+        res.json(rooms);
       } else {
-        console.log('CUserController.getList: Пустой request.body');
+        if (!req.body)
+          console.log('CRoomController.getList: Пустой request.body');
+        else
+          console.log('CRoomController.getList: Пустой request.user');
         res.status(400).json({ message: "В выполнении операции отказано." });
       }
 
@@ -100,4 +101,4 @@ class CUserController {
   }
 }
 
-export default new CUserController();
+export default new CRoomController();

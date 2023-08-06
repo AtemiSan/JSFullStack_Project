@@ -1,45 +1,134 @@
-import User from "../models/user.model";
-import { RegisterRequest, LoginRequest } from "../dtos/auth.dto";
+import userModel from "../models/user.model";
+import { IRegisterUserRequest, IUserRequest, IUserResponse, IUserUpdateRequest, IUserListRequest, IUserListResponse } from "../dtos/user.dto";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { Op } from "sequelize";
+import User from "../models/user.model";
 
-class UserService {
-    async createUser(userDTO: RegisterRequest) {
-        const hashPassword = await bcrypt.hash(userDTO.password, 10);
-        const user = await User.create(
-            {
-                email: userDTO.email,
-                password: hashPassword,
-                name: userDTO.name,
-                surname: userDTO.surname,
-                patronymic: userDTO.patronymic
-            }
-        )
+
+class CUserService {
+
+  //================================================================================================================================================================================
+  async getUser(reqDTO: IUserRequest) {
+    const user = await userModel.findAll({
+      where: {
+        idUser: reqDTO.idUser
+      },
+      paranoid: false
+    });
+
+    if (user && user.length == 1) {
+      return user[0] as IUserResponse;
+    } else {
+      if (!user) {
+        console.log('CUserService.getUser: Попытка получить несуществующего пользователя. idUser = ' + reqDTO.idUser);
+      } else {
+        console.log('CUserService.getUser: Колизия в БД, найдено больше одного пользователя. idUser = ' + reqDTO.idUser);
+      }
+    }
+  }
+
+  //================================================================================================================================================================================
+  async registerUser(reqDTO: IRegisterUserRequest) {
+    const passwHash = await bcrypt.hash(reqDTO.sPassw, 10);
+    const user = await userModel.create(
+      {
+        sFam: reqDTO.sFam,
+        sName: reqDTO.sName,
+        sOtch: reqDTO.sOtch,
+        sPhone: reqDTO.sPhone,
+        sEmail: reqDTO.sEmail,
+        sPassw: passwHash,
+        idDolg: reqDTO.idDolg,
+        idDep: reqDTO.idDep,
+        idRole: reqDTO.idRole
+      }
+    )
+    return true;
+  }
+
+  //================================================================================================================================================================================
+  async updateUser(reqDTO: IUserUpdateRequest) {
+    const user = await userModel.findAll({
+      where: {
+        idUser: reqDTO.idUser
+      },
+      paranoid: false
+    })
+
+    if (user && user.length == 1) {
+      user[0].update({
+        sFam: reqDTO.sFam,
+        sName: reqDTO.sName,
+        sOtch: reqDTO.sOtch,
+        sPhone: reqDTO.sPhone,
+        sEmail: reqDTO.sEmail,
+        idDolg: reqDTO.idDolg,
+        idDep: reqDTO.idDep,
+        idRole: reqDTO.idRole
+      });
+      if (reqDTO.sPassw.length > 0) {
+        const passwHash = await bcrypt.hash(reqDTO.sPassw, 10);
+        user[0].update({
+          sPassw: passwHash
+        });
+      }
+      if (reqDTO.bDel) {
+        user[0].destroy();
+      }
+////      user[0].save();
+      return user[0] as IUserResponse;
+    } else {
+      if (!user) {
+        console.log('CUserService.updateUser: Попытка обновить несуществующего пользователя. idUser = ' + reqDTO.idUser);
+      } else {
+        console.log('CUserService.updateUser: Колизия в БД, найдено больше одного пользователя. idUser = ' + reqDTO.idUser);
+      }
+    }
+  }
+
+  //================================================================================================================================================================================
+  async deleteUser(reqDTO: IUserRequest) {
+    const user = await userModel.findAll({
+      where: {
+        idUser: reqDTO.idUser
+      }
+    })
+
+    if (user && user.length == 1) {
+      user[0].destroy();
+////      user[0].save();
+      return true;
+    } else {
+      if (!user) {
+        console.log('CUserService.deleteUser: Попытка удалить несуществующего пользователя. idUser = ' + reqDTO.idUser);
+      } else {
+        console.log('CUserService.deleteUser: Колизия в БД, найдено больше одного пользователя. idUser = ' + reqDTO.idUser);
+      }
+    }
+  }
+
+  //================================================================================================================================================================================
+  async getList(reqDTO: IUserListRequest) {
+    let users: User[];
+    if (reqDTO.filters.deletedOnly) {
+      users = await userModel.findAll({
+        where: {
+          dtDel: {
+            [Op.not]: null
+          }
+        },
+        paranoid: false
+      });
+    } else if (reqDTO.filters.deletedAdd) {
+      users = await userModel.findAll({
+        paranoid: false
+      });
+    } else {
+      users = await userModel.findAll();
     }
 
-    async getAllUsers() {
-        const users = await User.findAll();
-        return users;
-    }
-
-    async loginUser(loginDTO: LoginRequest) {
-        const user = await User.findAll({
-            where: {
-                email: loginDTO.email
-            }
-        })
-
-        // const hashFrom = await bcrypt.hash(loginDTO.password, 10); // Типичная ошибка, хэш будет другой, для проверки необходимо использовать bcrypt.compare()
-
-        if (user && loginDTO.email === user[0].email && await bcrypt.compare(loginDTO.password, user[0].password)) {
-            const token = jwt.sign(
-                { userId: user[0].id },
-                process.env.JWT_SECRET as string
-            )
-
-            return token;
-        }
-    }
+    return users as IUserListResponse;
+  }
 }
 
-export default new UserService();
+export default new CUserService();

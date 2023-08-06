@@ -1,4 +1,4 @@
-import { IRoom, IPageRequest } from "./common.dto";
+import { IRoom, IPageRequest } from "./data.dto";
 
 
 export interface IRegisterRoomRequest {
@@ -8,7 +8,7 @@ export interface IRegisterRoomRequest {
   bHasProjector: boolean
   bHasInternet: boolean
   idStatus: number
-  dtInEnable: Date
+  dtInEnable: Date | null
 }
 
 // RegisterRoomResponse - успех если получен код ответа 200
@@ -21,6 +21,13 @@ export interface IRoomResponse extends IRoom {
 
 }
 
+export interface IRoomUpdateRequest extends IRegisterRoomRequest {
+  idRoom: number
+  bDel: boolean
+}
+
+// RoomUpdateResponse - успех если получен код ответа 200
+
 export interface IRoomDeleteRequest {
   idRoom: number
 }
@@ -28,10 +35,11 @@ export interface IRoomDeleteRequest {
 // RoomDeleteResponse - успех если получен код ответа 200
 
 export interface IRoomFilters {
-  dtBegin: Date | null    // дата начала аренды (null - если фильтрация не нужна), для получения списка доступных переговорных
-  dtEnd: Date | null     	// дата окончания аренды (null - если фильтрация не нужна), для получения списка доступных переговорных
-  deletedOnly: boolean		// true - вернуть только удалённые (заменить условие по умолчанию bDel == false на bDel == true)
-  deletedAdd: boolean     // true - вернуть все (удалённые и не удалённые), отменяет условие по умолчанию bDel == false 
+  dtBegin: Date | null        // дата начала аренды (null - если фильтрация не нужна), для получения списка доступных переговорных
+  dtEnd: Date | null     	    // дата окончания аренды (null - если фильтрация не нужна), для получения списка доступных переговорных
+  adminNotDeleted: boolean    // true - вернуть только не удалённые
+  adminDeletedOnly: boolean		// true - вернуть только удалённые
+  adminDeletedAdd: boolean    // true - вернуть все (удалённые и не удалённые)
 }
 
 export interface IRoomListRequest extends IPageRequest {

@@ -1,25 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import User, { UserRoles } from "../models/user.model";
+import { IUserToken } from "../dtos/data.dto";
 
-interface IUser {
-    userId: number;
-}
 
-export const UserMiddleware = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    const user = req.user as IUser;
-    const userFromDB = await User.findAll({
-        where: {
-            id: user.userId
-        }
-    });
-
-    if (userFromDB[0].role == UserRoles.USER || userFromDB[0].role == UserRoles.ADMIN) {
-        next();
-    } else {
-        res.status(400).json({ message: "Вы не обладаете достаточными правами!" });
-    }
+export const UserMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const user = req.user as IUserToken;
+  if (user && user.role) {
+    next();
+  } else {
+    res.status(400).json({ message: "Вы не обладаете достаточными правами!" });
+  }
 }

@@ -7,7 +7,7 @@ export interface IDolgnost {
 
 export interface IDepartment {
   idDep: number
-  sDDep: string
+  sDep: string
 }
 
 export interface IRole {
@@ -26,14 +26,17 @@ export interface IRoom {
   sAddress: string
   sCabinet: string
   iSeatingPlaces: number
-  bHasProjector: boolean
-  bHasInternet: boolean
+  bHasProjector: number
+  bHasInternet: number
   status: IStatus
   dtInEnable: Date            
-  bDel: boolean
+  dtIns: Date
+  dtUpd: Date
+  dtDel: Date
 }
 
 export interface IUser {
+  idUser: number
   sFam: string
   sName: string
   sOtch: string
@@ -42,7 +45,9 @@ export interface IUser {
   dolg: IDolgnost
   dep: IDepartment
   role: IRole
-  bDel: boolean
+  dtIns: Date
+  dtUpd: Date
+  dtDel: Date
 }
 
 export interface IOrder {
@@ -51,12 +56,14 @@ export interface IOrder {
   dtEnd: Date
   sComment: string
   iSeatingPlaces: number
-  bHasProjector: boolean
-  bHasInternet: boolean
+  bHasProjector: number
+  bHasInternet: number
   room: IRoom
   status: IStatus
   userAgreement: IUser
-  bDel: boolean
+  dtIns: Date
+  dtUpd: Date
+  dtDel: Date
 }
 
 export interface IPageRequest {
@@ -73,23 +80,19 @@ export interface IDepListResponse extends Array<IDepartment> {
 }
 
 export interface IRoleListResponse extends Array<IRole> {
-  
+
+}
+
+export interface IUserToken {
+  idUser: number,
+  role: Role
 }
 
 export interface ILoginRequest {
   sEmail: string
   sPassw: string
 }
-  
-export interface ILoginResponse {
-  sFam: string
-  sName: string
-  sOtch: string
-  dolg: IDolgnost
-  dep: IDepartment
-  role: IRole
-}
-  
+
 export interface IRegisterUserRequest {
   sFam: string
   sName: string
@@ -102,7 +105,7 @@ export interface IRegisterUserRequest {
   idRole: number  	
 }
   
-// RegisterUserResponse - успех если получен код ответа 200
+// RegisterUserResponse - успех если получен код ответа 201
 
 export interface IUserRequest {
   idUser: number
@@ -117,24 +120,21 @@ export interface IUserUpdateRequest extends IRegisterUserRequest {
   bDel: boolean
 }
 
-// UserUpdateResponse - успех если получен код ответа 200
+// UserUpdateResponse - IUserResponse
 
-export interface IUserDeleteRequest {
-  idUser: number
-}
-
+// UserDeleteRequest - IUserRequest
 // UserDeleteResponse - успех если получен код ответа 200
 
 export interface IUserFilters {
-  deletedOnly: boolean		// true - вернуть только удалённые (заменить условие по умолчанию bDel == false на bDel == true)
-  deletedAdd: boolean		// true - вернуть все (удалённые и не удалённые), отменяет условие по умолчанию bDel == false 
+  deletedOnly: boolean		// true - вернуть только удалённые
+  deletedAdd: boolean		// true - вернуть все (удалённые и не удалённые)
 }
 
 export interface IUserListRequest extends IPageRequest {
   filters: IUserFilters
 }
 
-export interface IUserListResponse extends Array<IUser> {
+export interface IUserListResponse extends Array<IUserResponse> {
 
 }
 
@@ -146,10 +146,7 @@ export interface IChangePasswRequest {
 // ChangePasswResponse - успех если получен код ответа 200
 
 // ProfileRequest - no params
-
-export interface IProfileResponse extends IUser {
-
-}
+// ProfileResponse - IUserResponse
 
 export interface IRegisterOrderRequest {
   dtBegin: Date           
@@ -178,10 +175,26 @@ export interface IOrderDeleteRequest {
 // OrderDeleteResponse - успех если получен код ответа 200
 
 export interface IOrderFilters {
-  active: boolean           // true - вернуть активные (добавить в запрос status = на согласовании и согласованные + время окончания аренды ещё не истекло)
-  rejected: boolean         // true - вернуть отклонённые (добавить в запрос status = отклонённые)
-  deletedOnly: boolean		// true - вернуть только удалённые (заменить условие по умолчанию bDel == false на bDel == true)
-  deletedAdd: boolean		// true - вернуть все (удалённые и не удалённые), отменяет условие по умолчанию bDel == false 
+  // Для запросов от пользователя
+  userActive: boolean       // true - вернуть активные (status = на согласовании и согласованные + время окончания аренды ещё не истекло)
+  userRejected: boolean     // true - вернуть отклонённые (status = отклонённые, отменённые + просроченные)
+  userNotDeleted: boolean   // true - вернуть все, кроме удалённых
+  userDeletedOnly: boolean  // true - вернуть все удалённые
+  userDeletedAdd: boolean		// true - вернуть все (удалённые и не удалённые)
+  // Для запросов от согласующего
+  agreeActive: boolean           // true - вернуть активные для согласования (status = на согласовании и не просроченные)
+  agreeRejected: boolean         // true - вернуть отклонённые (status = отклонённые этим согласующим)
+  agreeAgreemented: boolean		   // true - вернуть все согласованные (status = согласованные этим согласующим)
+  agreeNotDeleted: boolean   
+  agreeDeletedOnly: boolean
+  agreeDeletedAdd: boolean
+  // Для запросов от администратора
+  adminActive: boolean          // true - вернуть активные для согласования (status = на согласовании и не просроченные)
+  adminRejected: boolean        // true - вернуть отклонённые (status = отклонённые)
+  adminAgreemented: boolean     // true - вернуть все согласованные (status = согласованные)
+  adminNotDeleted: boolean   
+  adminDeletedOnly: boolean
+  adminDeletedAdd: boolean
 }
 
 export interface IOrderListRequest extends IPageRequest {
@@ -197,7 +210,7 @@ export interface IOrderChangeStatusRequest {
   idStatus: number
 }
 
-// OrderChangeStatusResponse - успех если получен код ответа 200
+// OrderChangeStatusResponse - IOrderResponse
 
 export interface IRegisterRoomRequest {
   sAddress: string
@@ -206,7 +219,7 @@ export interface IRegisterRoomRequest {
   bHasProjector: boolean
   bHasInternet: boolean
   idStatus: number
-  dtInEnable: Date
+  dtInEnable: Date | null
 }
 
 // RegisterRoomResponse - успех если получен код ответа 200
@@ -219,6 +232,13 @@ export interface IRoomResponse extends IRoom {
 
 }
 
+export interface IRoomUpdateRequest extends IRegisterRoomRequest {
+  idRoom: number
+  bDel: boolean
+}
+
+// RoomUpdateResponse - успех если получен код ответа 200
+
 export interface IRoomDeleteRequest {
   idRoom: number
 }
@@ -226,10 +246,11 @@ export interface IRoomDeleteRequest {
 // RoomDeleteResponse - успех если получен код ответа 200
 
 export interface IRoomFilters {
-  dtBegin: Date | null     	// дата начала аренды (null - если фильтрация не нужна), для получения списка доступных переговорных
-  dtEnd: Date | null     	// дата окончания аренды (null - если фильтрация не нужна), для получения списка доступных переговорных
-  deletedOnly: boolean		// true - вернуть только удалённые (заменить условие по умолчанию bDel == false на bDel == true)
-  deletedAdd: boolean		// true - вернуть все (удалённые и не удалённые), отменяет условие по умолчанию bDel == false 
+  dtBegin: Date | null        // дата начала аренды (null - если фильтрация не нужна), для получения списка доступных переговорных
+  dtEnd: Date | null     	    // дата окончания аренды (null - если фильтрация не нужна), для получения списка доступных переговорных
+  adminNotDeleted: boolean    // true - вернуть только не удалённые
+  adminDeletedOnly: boolean		// true - вернуть только удалённые
+  adminDeletedAdd: boolean    // true - вернуть все (удалённые и не удалённые)
 }
 
 export interface IRoomListRequest extends IPageRequest {
@@ -239,22 +260,3 @@ export interface IRoomListRequest extends IPageRequest {
 export interface IRoomListResponse extends Array<IRoom> {
 
 }
-
-export interface IOrderAgreementFilters {
-  active: boolean           // true - вернуть активные (добавить в запрос status = на согласовании)
-  rejected: boolean         // true - вернуть отклонённые (добавить в запрос status = отклонённые)
-  agreemented: boolean		// true - вернуть все согласованные (добавить в запрос status = согласованные)
-  agreementedByMe: boolean	// true - вернуть все согласованные этим согласующим (добавить в запрос status = согласованные + проверка согласующего)
-}
-
-export interface IOrderAgreementListRequest extends IPageRequest {
-  filters: IOrderAgreementFilters
-}
-
-export interface IOrderAgreementRequest {
-  idOrder: number
-  idStatus: number
-}
-
-// OrderAgreementResponse - успех если получен код ответа 200
-

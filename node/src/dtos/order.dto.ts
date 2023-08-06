@@ -1,4 +1,4 @@
-import { IOrder, IPageRequest } from "./common.dto";
+import { IOrder, IPageRequest } from "./data.dto";
 
 
 export interface IRegisterOrderRequest {
@@ -28,10 +28,26 @@ export interface IOrderDeleteRequest {
 // OrderDeleteResponse - успех если получен код ответа 200
 
 export interface IOrderFilters {
-  active: boolean           // true - вернуть активные (добавить в запрос status = на согласовании и согласованные + время окончания аренды ещё не истекло)
-  rejected: boolean         // true - вернуть отклонённые (добавить в запрос status = отклонённые)
-  deletedOnly: boolean		// true - вернуть только удалённые (заменить условие по умолчанию bDel == false на bDel == true)
-  deletedAdd: boolean		// true - вернуть все (удалённые и не удалённые), отменяет условие по умолчанию bDel == false 
+  // Для запросов от пользователя
+  userActive: boolean       // true - вернуть активные (status = на согласовании и согласованные + время окончания аренды ещё не истекло)
+  userRejected: boolean     // true - вернуть отклонённые (status = отклонённые, отменённые + просроченные)
+  userNotDeleted: boolean   // true - вернуть все, кроме удалённых
+  userDeletedOnly: boolean  // true - вернуть все удалённые
+  userDeletedAdd: boolean		// true - вернуть все (удалённые и не удалённые)
+  // Для запросов от согласующего
+  agreeActive: boolean           // true - вернуть активные для согласования (status = на согласовании и не просроченные)
+  agreeRejected: boolean         // true - вернуть отклонённые (status = отклонённые этим согласующим)
+  agreeAgreemented: boolean		   // true - вернуть все согласованные (status = согласованные этим согласующим)
+  agreeNotDeleted: boolean   
+  agreeDeletedOnly: boolean
+  agreeDeletedAdd: boolean
+  // Для запросов от администратора
+  adminActive: boolean          // true - вернуть активные для согласования (status = на согласовании и не просроченные)
+  adminRejected: boolean        // true - вернуть отклонённые (status = отклонённые)
+  adminAgreemented: boolean     // true - вернуть все согласованные (status = согласованные)
+  adminNotDeleted: boolean   
+  adminDeletedOnly: boolean
+  adminDeletedAdd: boolean
 }
 
 export interface IOrderListRequest extends IPageRequest {
@@ -47,5 +63,4 @@ export interface IOrderChangeStatusRequest {
   idStatus: number
 }
 
-// OrderChangeStatusResponse - успех если получен код ответа 200
-    
+// OrderChangeStatusResponse - IOrderResponse
