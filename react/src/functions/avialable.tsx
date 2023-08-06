@@ -12,6 +12,13 @@ import { Building, Cabinet } from "../model/reference"
     createDataB(4, 'Здание 4'),
   ]
 
+export interface IRoomFilters {
+  dtBegin: Date | null    // дата начала аренды (null - если фильтрация не нужна), для получения списка доступных переговорных
+  dtEnd: Date | null         // дата окончания аренды (null - если фильтрация не нужна), для получения списка доступных переговорных
+  deletedOnly: boolean        // true - вернуть только удалённые (заменить условие по умолчанию bDel == false на bDel == true)
+  deletedAdd: boolean     // true - вернуть все (удалённые и не удалённые), отменяет условие по умолчанию bDel == false 
+}
+
 export function getFreeBuiding() {
 
     return (

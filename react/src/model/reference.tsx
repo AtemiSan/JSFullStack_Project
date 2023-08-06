@@ -1,4 +1,5 @@
 // справочники
+
 export interface Building {
   id: number
   Building: string

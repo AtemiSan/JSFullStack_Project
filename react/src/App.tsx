@@ -10,6 +10,7 @@ import { RegistrationPage } from './pages/RegistrationPage'
 import { AgreementPage } from './pages/AgreementPage'
 import { ProfileChangePasswPage } from './pages/ProfileChangePasswPage'
 import { OrderPage } from './pages/OrderPage'
+import { ReferencesPage } from './pages/ReferencesPage'
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
         <Route path='create_order' element={<CreateOrderPage />} />
         <Route path='registration' element={<RegistrationPage />} />
         <Route path='agreement' element={<AgreementPage />} />
-     
+        <Route path='references' element={<ReferencesPage />} />
       </Route>   
     </Routes>
   );
