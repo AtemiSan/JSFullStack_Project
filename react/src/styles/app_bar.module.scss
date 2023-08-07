@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=fallback');
+
 .main {
   display: flex;
   border-bottom: 2px solid rgb(190, 190, 190);
@@ -20,15 +21,63 @@
   justify-content: end;
   align-items: center;
 }
-
+/*
 .mainMenu {
   width: 35px;
   height: 35px;
   margin: 0px 0px 0px 30px;
   text-decoration: none;
-}
 
 .mainMenu:hover { 
   background-color: rgb(212, 212, 212);
   cursor: pointer;
+} */
+
+.dropbtn {
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
 }
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown_content {
+  display: none;
+  position: absolute;
+  background-color: #fae596;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown_content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  font-weight: bold;
+  display: block;
+}
+
+.dropdown_content a:hover {background-color: #3fb0ac;}
+
+.dropdown:hover .dropdown_content {display: block;}
+
+.dropdown:hover .dropbtn {background-color:  #2ea2b2;}
+
+/*Стили только для смартфонов*/
+@media screen and (max-device-width:480px){
+  .main {
+    display:block;
+    border-bottom: 2px solid rgb(190, 190, 190);
+    background-color: #dddfd4; //white;
+    width: 100%;
+  }
+}
+/*Стили только для десктопов*/
+@media screen and (min-width:769px){
+  .dropdown { display: none;}
+}  

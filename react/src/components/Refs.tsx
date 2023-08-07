@@ -42,7 +42,9 @@ export function Refs({ }: IRefsProps) {
                             onClick={() => { navigate(item.navigate) }}>{item.text}</div>
                     )}
                 </div>
+
             </div>
+
         </>
     )
 }
