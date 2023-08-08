@@ -24,7 +24,10 @@ export function AppBar({ }: IAppBarProps) {
   }, []);
 
   const navigate = useNavigate();
-  let role: IRole;
+  let role: IRole = {
+    idRole: 0,
+    sRole: 'админ'
+  };
 
   /*
     return (

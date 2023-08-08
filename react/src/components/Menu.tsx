@@ -33,7 +33,10 @@ const ButtonsMenu = [
     const ButtonsMenu = getButtonsMenu();
     
 export function Menu({}: IMenuProps) {
-  let role: IRole;
+  let role: IRole = {
+    idRole: 0,
+    sRole: 'админ'
+  };
 
   const navigate = useNavigate();
   
