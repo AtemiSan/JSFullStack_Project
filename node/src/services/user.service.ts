@@ -1,15 +1,14 @@
-import userModel from "../models/user.model";
+import usersModel from "../models/user.model";
 import { IRegisterUserRequest, IUserRequest, IUserResponse, IUserUpdateRequest, IUserListRequest, IUserListResponse } from "../dtos/user.dto";
 import bcrypt from "bcrypt";
 import { Op } from "sequelize";
-import User from "../models/user.model";
 
 
 class CUserService {
 
   //================================================================================================================================================================================
   async getUser(reqDTO: IUserRequest) {
-    const user = await userModel.findAll({
+    const user = await usersModel.findAll({
       where: {
         idUser: reqDTO.idUser
       },
@@ -30,7 +29,7 @@ class CUserService {
   //================================================================================================================================================================================
   async registerUser(reqDTO: IRegisterUserRequest) {
     const passwHash = await bcrypt.hash(reqDTO.sPassw, 10);
-    const user = await userModel.create(
+    const user = await usersModel.create(
       {
         sFam: reqDTO.sFam,
         sName: reqDTO.sName,
@@ -48,7 +47,7 @@ class CUserService {
 
   //================================================================================================================================================================================
   async updateUser(reqDTO: IUserUpdateRequest) {
-    const user = await userModel.findAll({
+    const user = await usersModel.findAll({
       where: {
         idUser: reqDTO.idUser
       },
@@ -88,7 +87,7 @@ class CUserService {
 
   //================================================================================================================================================================================
   async deleteUser(reqDTO: IUserRequest) {
-    const user = await userModel.findAll({
+    const user = await usersModel.findAll({
       where: {
         idUser: reqDTO.idUser
       }
@@ -109,9 +108,9 @@ class CUserService {
 
   //================================================================================================================================================================================
   async getList(reqDTO: IUserListRequest) {
-    let users: User[];
+    let users: usersModel[];
     if (reqDTO.filters.deletedOnly) {
-      users = await userModel.findAll({
+      users = await usersModel.findAll({
         where: {
           dtDel: {
             [Op.not]: null
@@ -120,11 +119,11 @@ class CUserService {
         paranoid: false
       });
     } else if (reqDTO.filters.deletedAdd) {
-      users = await userModel.findAll({
+      users = await usersModel.findAll({
         paranoid: false
       });
     } else {
-      users = await userModel.findAll();
+      users = await usersModel.findAll();
     }
 
     return users as IUserListResponse;

@@ -7,7 +7,7 @@ import Status from "./status.model";
   freezeTableName: true,
   underscored: true
 })
-export default class Meeting_Room extends Model {
+export default class meeting_room extends Model {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.INTEGER)

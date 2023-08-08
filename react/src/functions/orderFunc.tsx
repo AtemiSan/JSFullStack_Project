@@ -1,4 +1,5 @@
-import { IDepartment, IDolgnost, IOrder, IRole, IRoom, IStatus, IUser } from "../model/reference";
+import { IOrderListResponse, IOrderResponse } from "../model/order";
+import { IDepartment, IDolgnost, IRole, IRoom, IStatus, IUser } from "../model/data";
 
 // функции для работы с заявками
 /*const createData = (
@@ -34,7 +35,7 @@ const createData = (
     userAgreement: IUser,
     dtIns: Date,
     dtUpd: Date,
-    dtDel: Date): IOrder => ({ idOrder, dtBegin, dtEnd, sComment, iSeatingPlaces, bHasProjector, bHasInternet, room, status, userAgreement, dtIns, dtUpd, dtDel })
+    dtDel: Date): IOrderResponse => ({ idOrder, dtBegin, dtEnd, sComment, iSeatingPlaces, bHasProjector, bHasInternet, room, status, userAgreement, dtIns, dtUpd, dtDel })
 
 const crRoom = (
     idRoom: number,
@@ -71,7 +72,7 @@ const crUser =(
 ): IUser => ({idUser, sFam, sName, sOtch, sPhone, sEmail, dolg, dep, role, dtIns, dtUpd, dtDel})
 
 // это будет запрос возвращать
-const Orders = [
+const Orders: IOrderListResponse = [
     createData(123, new Date(), new Date(), 'ком 1', 1, 1, 0, 
         crRoom(1, 'Здание1', '#100', 10, 1, 1, crStatus(1, 'статус', ''), new Date(), new Date(), new Date(), new Date()), 
         crStatus(1, 'статус', ''),
@@ -97,32 +98,14 @@ const Orders = [
 ]
 
 export function getOrders() {
-
-    return (
-        Orders
-    )
+  return Orders
 }
 
 // поиск заказа по id
-let order: IOrder;
-export function getOrder(id: number) {
-    //let order: IOrderData;
-    //const findorder = Orders.find(function (item, index, array) { ( item.id = id ) ? true : false })
-    const findorder = Orders.find(item => item.idOrder == id)
-
-    if (typeof findorder !== 'undefined') {
-        order.idOrder = findorder.idOrder
-        order.dtBegin = findorder.dtBegin
-        order.dtEnd = findorder.dtEnd
-        order.sComment = findorder.sComment
-        order.iSeatingPlaces = findorder.iSeatingPlaces
-        order.bHasProjector = findorder.bHasProjector
-        order.bHasInternet = findorder.bHasInternet
-        order.room.sAddress = findorder.room.sAddress
-        order.room.sCabinet = findorder.room.sCabinet
-        order.status.sStatus = findorder.status.sStatus
-    }
-    return (
-        order
-    )
+export function getOrder(id: number): IOrderResponse | null {
+  const order = Orders.find(item => item.idOrder == id);
+  if (order) 
+    return order;
+  else
+    return null;
 }  

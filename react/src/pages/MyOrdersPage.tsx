@@ -16,34 +16,27 @@ export function MyOrdersPage({ }: IMyOrdersPageProps) {
     alert('Заявка отправлена');
   }
   
-  return (
-    <>
-      <div className={common.title}>
-        Мои заявки
-      </div>
-      {rows.map(item =>
-        <Order
-        idOrder={item.idOrder}
-        dtBegin={item.dtBegin} 
-        dtEnd={item.dtEnd} 
-        room={item.room} 
-        iSeatingPlaces={item.iSeatingPlaces}
-        status={item.status}
-        sComment={item.sComment}
-        bHasProjector={item.bHasProjector}
-        bHasInternet={item.bHasInternet}
-        />)}
-    </>
-  )
+  if (rows) {
+    return (
+      <>
+        <div className={common.title}>
+          Мои заявки
+        </div>
+        {rows.map(item =>
+          <Order
+            idOrder={item.idOrder}
+            dtBegin={item.dtBegin} 
+            dtEnd={item.dtEnd} 
+            sComment={item.sComment}
+            iSeatingPlaces={item.iSeatingPlaces}
+            bHasProjector={item.bHasProjector}
+            bHasInternet={item.bHasInternet}
+            room={item.room} 
+            status={item.status}
+          />
+        )}
+      </>
+    )
+  } else
+    return null;
 }
-
-/*
-          id={item.id}
-          dtTime_from={item.dtTime_from}
-          dtTime_to={item.dtTime_to}
-          sAdress={item.sAdress}
-          sCabinet={item.sCabinet}
-          seatingPlaces={item.seatingPlaces}
-          sState={item.sState}*/
-
-          //userAgreement={rows.userAgreement}

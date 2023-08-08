@@ -47,6 +47,7 @@ export function LoginPage({}: ILoginPageProps) {
     };
 
     // Запрос токена
+    console.log(API_PUBLIC_AUTH + '/login');
     let responseToken = await fetch(API_PUBLIC_AUTH + '/login', {
       method: 'POST',
       headers: {
@@ -54,6 +55,7 @@ export function LoginPage({}: ILoginPageProps) {
       },
       body: JSON.stringify(data)
     });
+    console.log('fetched');
     let resultToken = await responseToken.json();
 
     // Токен получен, запрос профиля

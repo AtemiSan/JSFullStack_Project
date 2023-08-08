@@ -16,7 +16,7 @@ export enum Statuses {
   freezeTableName: true,
   underscored: true
 })
-export default class Status extends Model {
+export default class status extends Model {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.INTEGER)

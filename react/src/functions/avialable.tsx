@@ -1,4 +1,4 @@
-import { Building, Cabinet } from "../model/reference"
+import { Building, Cabinet } from "../model/data"
 
 // Свободные здания
   const createDataB = (

@@ -1,13 +1,15 @@
 import classes from '../styles/menu.module.scss';
 import common from '../styles/common.module.scss';
 import { useNavigate } from 'react-router-dom';
-import { IRole, UserRoles } from '../model/reference';
+import { IRole, UserRoles } from '../model/data';
+import { getButtonsMenu } from '../functions/screenFunc';
 
 export interface IMenuProps {
 
 }
 
 // для списка кнопок
+/*
 export interface ButtonMenu {
   id: string
   navigate: string
@@ -26,7 +28,10 @@ const ButtonsMenu = [
   createData('agreement', 'agreement', 'Согласование'),
   createData('references','references', 'Справочники')
 ]
+*/
 
+    const ButtonsMenu = getButtonsMenu();
+    
 export function Menu({}: IMenuProps) {
   let role: IRole;
 

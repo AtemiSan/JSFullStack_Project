@@ -54,7 +54,7 @@ export interface IOrderListRequest extends IPageRequest {
   filters: IOrderFilters
 }
 
-export interface IOrderListResponse extends Array<IOrder> {
+export interface IOrderListResponse extends Array<IOrderResponse> {
 
 }
 

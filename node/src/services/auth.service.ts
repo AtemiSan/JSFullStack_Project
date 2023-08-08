@@ -4,6 +4,7 @@ import { IChangePasswRequest, IUserResponse } from "../dtos/user.dto";
 import userModel from "../models/user.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { sequelize } from "../sequelize";
 
 
 class CAuthService {
@@ -11,15 +12,16 @@ class CAuthService {
   //================================================================================================================================================================================
   async login(loginDTO: ILoginRequest) {
     const user = await userModel.findAll({
-      where: {
-        email: loginDTO.sEmail
-      }
+      where: 
+        sequelize.where(
+          sequelize.fn('lower', sequelize.col('s_email')), 
+          sequelize.fn('lower', loginDTO.sEmail)
+        )
     })
 
     // const hashFrom = await bcrypt.hash(loginDTO.password, 10); // Типичная ошибка, хэш будет другой, для проверки необходимо использовать bcrypt.compare()
-
     if (user && user.length == 1 
-      && loginDTO.sEmail === user[0].sEmail 
+      && loginDTO.sEmail.toLowerCase === user[0].sEmail.toLowerCase 
       && await bcrypt.compare(loginDTO.sPassw, user[0].sPassw))
     {
       const token = jwt.sign({
@@ -60,6 +62,7 @@ class CAuthService {
 
   //================================================================================================================================================================================
   async getProfile(reqUser: IUserToken) {
+    console.log('getProfile ' + reqUser);
     const user = await userModel.findAll({
       where: {
         idUser: reqUser.idUser

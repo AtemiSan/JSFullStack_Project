@@ -9,7 +9,7 @@ import Meeting_Room from "./room.model";
   freezeTableName: true,
   underscored: true
 })
-export default class Order_Meeting_Room extends Model {
+export default class order_meeting_room extends Model {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.INTEGER)

@@ -1,4 +1,4 @@
-import { IOrder, IPageRequest } from "./reference";
+import { IOrder, IPageRequest } from "./data";
 
 export interface IRegisterOrderRequest {
   dtBegin: Date           
@@ -53,7 +53,7 @@ export interface IOrderListRequest extends IPageRequest {
   filters: IOrderFilters
 }
 
-export interface IOrderListResponse extends Array<IOrder> {
+export interface IOrderListResponse extends Array<IOrderResponse> {
 
 }
 

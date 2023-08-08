@@ -22,7 +22,7 @@ insert into STATUS values (14, 'Отменено системой');
 
 
 
-create sequence USER_SEQ
+create sequence USERS_SEQ
 minvalue 1
 maxvalue 99999999
 start with 1
@@ -30,27 +30,27 @@ increment by 1
 cache 20;
 
 
-create or replace function USER_BI() RETURNS trigger AS $$
+create or replace function USERS_BI() RETURNS trigger AS $$
 begin
    -- получение нового ID записи
   if (coalesce(new.ID_USER, 0) <= 0) then
-    select NEXTVAL('USER_SEQ') into new.ID_USER;
+    select NEXTVAL('USERS_SEQ') into new.ID_USER;
   end if;
   return new;
 end;
 $$ LANGUAGE plpgsql;
 
 
-CREATE TRIGGER USER_BI_TR before insert on USER
-    FOR EACH ROW EXECUTE PROCEDURE USER_BI();
+CREATE TRIGGER USERS_BI_TR before insert on USERS
+    FOR EACH ROW EXECUTE PROCEDURE USERS_BI();
 
 
 
 -- пароль admin
-insert into USER (S_FAM, S_NAME, S_OTCH, S_EMAIL, S_PASSW, S_PHONE, ID_DEP, ID_DOLG, ID_ROLE)
-	values ('Кодема', 'Вячеслав', 'Александрович', 'KodemaSlava@yandex.ru', '$2b$10$PuK8nRE5trlBqhbibrhW0uAIAbM9TiNFpaAMRCixuqusu73YYLA2O', '+79215634875', 1, 2, 0)
-insert into USER (S_FAM, S_NAME, S_OTCH, S_EMAIL, S_PASSW, S_PHONE, ID_DEP, ID_DOLG, ID_ROLE)
-	values ('Ахтямова', 'Айгуль', '', 'aigul_mail@yandex.ru', '$2b$10$PuK8nRE5trlBqhbibrhW0uAIAbM9TiNFpaAMRCixuqusu73YYLA2O', '+79216234562', 1, 2, 0)
+insert into USERS (S_FAM, S_NAME, S_OTCH, S_EMAIL, S_PASSW, S_PHONE, ID_DEP, ID_DOLG, ID_ROLE)
+	values ('Кодема', 'Вячеслав', 'Александрович', 'KodemaSlava@yandex.ru', '$2b$10$PuK8nRE5trlBqhbibrhW0uAIAbM9TiNFpaAMRCixuqusu73YYLA2O', '+79215634875', 1, 2, 0);
+insert into USERS (S_FAM, S_NAME, S_OTCH, S_EMAIL, S_PASSW, S_PHONE, ID_DEP, ID_DOLG, ID_ROLE)
+	values ('Ахтямова', 'Айгуль', '', 'aigul_mail@yandex.ru', '$2b$10$PuK8nRE5trlBqhbibrhW0uAIAbM9TiNFpaAMRCixuqusu73YYLA2O', '+79216234562', 1, 2, 0);
 
 
 

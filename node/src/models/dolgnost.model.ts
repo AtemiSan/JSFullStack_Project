@@ -6,7 +6,7 @@ import { Table, Column, AllowNull, PrimaryKey, Model, AutoIncrement, DataType, C
   freezeTableName: true,
   underscored: true
 })
-export default class Dolgnost extends Model {
+export default class dolgnost extends Model {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.INTEGER)

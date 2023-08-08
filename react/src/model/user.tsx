@@ -1,4 +1,4 @@
-import { IUser, IPageRequest } from "./reference";
+import { IUser, IPageRequest } from "./data";
 
 
 export interface IRegisterUserRequest {

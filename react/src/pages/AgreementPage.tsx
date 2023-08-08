@@ -16,26 +16,29 @@ export function AgreementPage({ }: IAgreementPageProps) {
     alert('Заявка отправлена');
   }
 
-  return (
-    <>
-      <div className={common.title}>
-        Согласование заявки
-      </div>
-      {rows.map(item =>
-        <Order
-        idOrder={item.idOrder}
-        dtBegin={item.dtBegin} 
-        dtEnd={item.dtEnd} 
-        room={item.room} 
-        iSeatingPlaces={item.iSeatingPlaces}
-        status={item.status}
-        sComment={item.sComment}
-        bHasProjector={item.bHasProjector}
-        bHasInternet={item.bHasInternet}
-        bDel={item.bDel}           
-        />)}     
-    </>
-  )
+  if (rows) {
+    return (
+      <>
+        <div className={common.title}>
+          Согласование заявки
+        </div>
+        {rows.map(item =>
+          <Order
+            idOrder={item.idOrder}
+            dtBegin={item.dtBegin} 
+            dtEnd={item.dtEnd} 
+            sComment={item.sComment}
+            iSeatingPlaces={item.iSeatingPlaces}
+            bHasProjector={item.bHasProjector}
+            bHasInternet={item.bHasInternet}
+            room={item.room} 
+            status={item.status}
+          />
+        )}     
+      </>
+    )
+  } else
+    return null;
 }
 
 /*

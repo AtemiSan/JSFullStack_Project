@@ -15,7 +15,7 @@ export enum UserRoles {
   freezeTableName: true,
   underscored: true
 })
-export default class User extends Model {
+export default class users extends Model {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.INTEGER)

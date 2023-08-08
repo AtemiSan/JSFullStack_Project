@@ -1,4 +1,4 @@
-import { IPageRequest, IRoom } from "./reference"
+import { IPageRequest, IRoom } from "./data"
 
 
 export interface IRegisterRoomRequest {
@@ -46,6 +46,6 @@ export interface IRoomListRequest extends IPageRequest {
   filters: IRoomFilters
 }
 
-export interface IRoomListResponse extends Array<IRoom> {
+export interface IRoomListResponse extends Array<IRoomResponse> {
 
 }

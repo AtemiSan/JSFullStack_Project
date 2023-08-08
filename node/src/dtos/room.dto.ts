@@ -46,6 +46,6 @@ export interface IRoomListRequest extends IPageRequest {
   filters: IRoomFilters
 }
 
-export interface IRoomListResponse extends Array<IRoom> {
+export interface IRoomListResponse extends Array<IRoomResponse> {
 
 }

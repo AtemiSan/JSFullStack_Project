@@ -1,7 +1,8 @@
 import classes from '../styles/order.module.scss';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { IOrder, IRole, UserRoles } from '../model/reference';
+import { IRole, IRoom, IStatus, UserRoles } from '../model/data';
+import { IOrderResponse } from '../model/order';
 
 // для списка кнопок
 export interface ButtonOrder {
@@ -18,14 +19,27 @@ const ButtonsOrder = [
   createData('approve', 'Согласовать'),
   createData('reject', 'Отклонить'),
 ]
-export function Order(props: IOrder, role: IRole) {
+
+export interface IOrderProps {
+  idOrder: number
+  dtBegin: Date            
+  dtEnd: Date
+  sComment: string
+  iSeatingPlaces: number
+  bHasProjector: number
+  bHasInternet: number
+  room: IRoom
+  status: IStatus
+}
+
+export function Order(props: IOrderProps, role: IRole) {
 
   const navigate = useNavigate();
   const edit = () => navigate('order')
   const [showForm, setShowForm] = useState(false)
   const openForm = () => setShowForm(true)
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: IOrder["idOrder"], btn_id: string ) => {
+  const handleClick = (event: React.MouseEvent<unknown>, id: IOrderResponse["idOrder"], btn_id: string ) => {
     if ( btn_id == 'approve' ) alert('Заявка согласована!');
     else if ( btn_id == 'reject' ) alert('Заявка отклонена!');
     else if ( btn_id == 'cancel' ) alert('Заявка отменена!');
@@ -45,7 +59,7 @@ export function Order(props: IOrder, role: IRole) {
     <div className={classes.card}>
       <div className={classes.item}>Время аренды: {getFormatedDate(props.dtBegin)} - {getFormatedDate(props.dtEnd)}</div>
       <div className={classes.item}>Здание : {props.room.sAddress}</div>  
-      <div className={classes.item}>Помещение :           {props.room.sCabinet}</div>
+      <div className={classes.item}>Помещение : {props.room.sCabinet}</div>
       <div className={classes.item}>
         <a>Количество человек: <a> </a>{props.iSeatingPlaces}</a><a> </a>
         <a>Наличие проектора <input className={classes.checkbox} type='checkbox' checked={props.bHasProjector ? true : false}/></a><a> </a>

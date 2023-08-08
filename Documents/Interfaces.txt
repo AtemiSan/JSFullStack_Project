@@ -201,7 +201,7 @@ export interface IOrderListRequest extends IPageRequest {
   filters: IOrderFilters
 }
 
-export interface IOrderListResponse extends Array<IOrder> {
+export interface IOrderListResponse extends Array<IOrderResponse> {
 
 }
 
@@ -257,6 +257,6 @@ export interface IRoomListRequest extends IPageRequest {
   filters: IRoomFilters
 }
 
-export interface IRoomListResponse extends Array<IRoom> {
+export interface IRoomListResponse extends Array<IRoomResponse> {
 
 }

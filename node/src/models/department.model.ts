@@ -6,7 +6,7 @@ import { Table, Column, AllowNull, PrimaryKey, Model, AutoIncrement, DataType, C
   freezeTableName: true,
   underscored: true
 })
-export default class Department extends Model {
+export default class department extends Model {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.INTEGER)

@@ -1,4 +1,4 @@
-import { IDepartment, IDolgnost, IRole1 } from "../model/reference";
+import { IDepartment, IDolgnost, IRole } from "../model/data";
 
 /* достаем значения справчоников */
 
@@ -6,7 +6,7 @@ import { IDepartment, IDolgnost, IRole1 } from "../model/reference";
 const crRole = (
     idRole: number,
     sRole: string
-): IRole1 => ({ idRole, sRole })
+): IRole => ({ idRole, sRole })
 
 const Roles = [
     crRole(0, 'Администратор'),
@@ -41,8 +41,8 @@ export function getDolgnosts() {
 // справочник Подразделений
 const crDepartment = (
     idDep: number,
-    sDDep: string
-): IDepartment => ({ idDep, sDDep })
+    sDep: string
+): IDepartment => ({ idDep, sDep })
 
 const Departments = [
     crDepartment(0, 'Директор'),
