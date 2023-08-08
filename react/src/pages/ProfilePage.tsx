@@ -97,7 +97,7 @@ export function ProfilePage({}: IProfilePageProps) {
             Подразделение
             <select className={classes.input} required>
               <option selected disabled></option>
-              {departments.map(item => <option value={item.idDep}> {item.sDDep} </option>)}
+              {departments.map(item => <option value={item.idDep}> {item.sDep} </option>)}
             </select>
           </label>    
 

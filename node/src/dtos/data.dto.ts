@@ -1,4 +1,3 @@
-import Role from "../models/role.model"
 
 
 export interface IDolgnost {
@@ -86,5 +85,5 @@ export interface IRoleListResponse extends Array<IRole> {
 
 export interface IUserToken {
   idUser: number,
-  role: Role
+  role: IRole
 }

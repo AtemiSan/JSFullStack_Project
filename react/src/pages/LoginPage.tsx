@@ -1,8 +1,10 @@
 import classes from '../styles/login.module.scss'
 import common from '../styles/common.module.scss'
 import { useState } from 'react';
-import { ILoginData } from '../model/login';
 import { useNavigate } from 'react-router-dom';
+import { API_PUBLIC_AUTH, API_USER_AUTH } from '../settings';
+import { ILoginRequest } from '../model/auth';
+import { IUserResponse } from '../model/user';
 
 export interface ILoginPageProps {
 
@@ -23,10 +25,51 @@ export function LoginPage({}: ILoginPageProps) {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  async function loginRequest(url: string, data: object) {
+    let response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+      body: JSON.stringify(data)
+    });
+
+    let result = await response.json();
+    return result;
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    navigate('/lk');
+    let data: ILoginRequest = {
+      sEmail: email,
+      sPassw: passw
+    };
+
+    // Запрос токена
+    let responseToken = await fetch(API_PUBLIC_AUTH + '/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+      body: JSON.stringify(data)
+    });
+    let resultToken = await responseToken.json();
+
+    // Токен получен, запрос профиля
+    if (responseToken.status == 200) {
+      let responseProfile = await fetch(API_USER_AUTH + '/getProfile');
+      let resultProfile = await responseProfile.json() as IUserResponse;
+      if (responseProfile.status == 200) {
+        console.log(resultProfile);
+        localStorage.setItem('idUser', (resultProfile.idUser ? resultProfile.idUser.toString : '') as string);
+        navigate('/lk');
+      } else {
+        console.log(resultProfile);
+      }
+    } else {
+      console.log(resultToken);
+    }
   }
 
   return (

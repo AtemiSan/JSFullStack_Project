@@ -1,7 +1,7 @@
 
 
 
-post	api/public/auth/login					ILoginRequest / IUserResponse
+post	api/public/auth/login					ILoginRequest / Response 200
 post	api/public/data/getDolgList				RequestNoParams / IDolgListResponse
 post	api/public/data/getDepartList			RequestNoParams / IDepListResponse
 post	api/public/data/getRoleList				RequestNoParams / IRoleListResponse

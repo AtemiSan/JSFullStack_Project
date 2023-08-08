@@ -32,7 +32,6 @@ export function MyOrdersPage({ }: IMyOrdersPageProps) {
         sComment={item.sComment}
         bHasProjector={item.bHasProjector}
         bHasInternet={item.bHasInternet}
-        bDel={item.bDel}        
         />)}
     </>
   )

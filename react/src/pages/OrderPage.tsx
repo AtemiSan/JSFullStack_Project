@@ -5,7 +5,7 @@ import { OrderMain } from '../components/OrderMain';
 import { useParams } from 'react-router-dom';
 import { equal } from 'assert';
 import { getOrder } from '../functions/orderFunc';
-import { IOrder } from '../model/Order';
+import { IOrder } from '../model/reference';
 import { type } from '@testing-library/user-event/dist/type';
 
 export interface IOrderPageProps {
@@ -52,31 +52,36 @@ export function OrderPage({ }: IOrderPageProps) {
   let id: number = 123;
 
 // получем заявку
-const row = getOrder(id)
+const row: IOrder = getOrder(id);
 
   return (
     <div className={classes.main}>
       <div className={classes.card}>
         <div className={common.title}>{headText} №{row.idOrder} </div>
         <form className={classes.form} onSubmit={handleSubmit}>
-          <OrderMain 
-            idOrder={row.idOrder}
-            dtBegin={row.dtBegin} 
-            dtEnd={row.dtEnd} 
-            sAdress={row.sAdress} 
-            sCabinet={row.sCabinet}
-            iSeatingPlaces={row.iSeatingPlaces}
-            status={row.status} 
-            sComment={row.sComment}
-            bHasProjector={row.bHasProjector}
-            bHasInternet={row.bHasInternet}
-            />
+
           <input className={classes.btn} type='submit' name='submit' value='Отправить' />
         </form>
       </div>
     </div>
   )
 }
+
+/*
+         <OrderMain 
+            idOrder={row.idOrder}
+            dtBegin={row.dtBegin} 
+            dtEnd={row.dtEnd} 
+            {room.sAddress}={row.room.sAddress} 
+            sCabinet={row.room.sCabinet}
+            iSeatingPlaces={row.iSeatingPlaces}
+            status={row.status} 
+            sComment={row.sComment}
+            bHasProjector={row.bHasProjector}
+            bHasInternet={row.bHasInternet}
+            />
+*/
+
 
 /*
             sAdress={row.sAdress} 

@@ -1,5 +1,4 @@
-import { IOrder, IOrderData } from "../model/Order"
-import { IDepartment, IDolgnost, IRole, IRoom, IStatus, IUser } from "../model/reference";
+import { IDepartment, IDolgnost, IOrder, IRole, IRoom, IStatus, IUser } from "../model/reference";
 
 // функции для работы с заявками
 /*const createData = (
@@ -28,23 +27,27 @@ const createData = (
     dtEnd: Date,
     sComment: string,
     iSeatingPlaces: number,
-    bHasProjector: boolean,
-    bHasInternet: boolean,
+    bHasProjector: number,
+    bHasInternet: number,
     room: IRoom,
     status: IStatus,
-    /* userAgreement: IUser,*/
-    bDel: boolean): IOrder => ({ idOrder, dtBegin, dtEnd, sComment, iSeatingPlaces, bHasProjector, bHasInternet, room, status, bDel }) //userAgreement,
+    userAgreement: IUser,
+    dtIns: Date,
+    dtUpd: Date,
+    dtDel: Date): IOrder => ({ idOrder, dtBegin, dtEnd, sComment, iSeatingPlaces, bHasProjector, bHasInternet, room, status, userAgreement, dtIns, dtUpd, dtDel })
 
 const crRoom = (
     idRoom: number,
     sAddress: string,
     sCabinet: string,
     iSeatingPlaces: number,
-    bHasProjector: boolean,
-    bHasInternet: boolean,
+    bHasProjector: number,
+    bHasInternet: number,
     status: IStatus,
     dtInEnable: Date,
-    bDel: boolean): IRoom => ({ idRoom, sAddress, sCabinet, iSeatingPlaces, bHasProjector, bHasInternet, status, dtInEnable, bDel })
+    dtIns: Date,
+    dtUpd: Date,
+    dtDel: Date): IRoom => ({ idRoom, sAddress, sCabinet, iSeatingPlaces, bHasProjector, bHasInternet, status, dtInEnable, dtIns, dtUpd, dtDel })
 
 const crStatus = (
     idStatus: number,
@@ -52,22 +55,39 @@ const crStatus = (
     sComment: string
 ): IStatus => ({ idStatus, sStatus, sComment })
 
-   const crUser =(
-       sFam: string,
-       sName: string,
-       sOtch: string,
-       sPhone: string,
-       sEmail: string,
-       dolg: IDolgnost,
-       dep: IDepartment,
-       role: IRole,
-       bDel: boolean      
-   ): IUser => ({sFam, sName, sOtch, sPhone, sEmail, dolg, dep, role, bDel})
+const crUser =(
+    idUser: number,
+    sFam: string,
+    sName: string,
+    sOtch: string,
+    sPhone: string,
+    sEmail: string,
+    dolg: IDolgnost,
+    dep: IDepartment,
+    role: IRole,
+    dtIns: Date,
+    dtUpd: Date,
+    dtDel: Date      
+): IUser => ({idUser, sFam, sName, sOtch, sPhone, sEmail, dolg, dep, role, dtIns, dtUpd, dtDel})
 
 // это будет запрос возвращать
 const Orders = [
-    createData(123, new Date(), new Date(), 'ком 1', 1, true, false, crRoom(1, 'Здание1', '#100', 10, true, true, crStatus(1, 'статус', ''), new Date(), true), crStatus(1, 'статус', ''), true),
-    createData(555, new Date(), new Date(), 'ком 3', 1, true, true, crRoom(1, 'Здание3', '#300', 30, true, true, crStatus(1, 'статус', ''), new Date(), true), crStatus(1, 'статус', ''), true),
+    createData(123, new Date(), new Date(), 'ком 1', 1, 1, 0, 
+        crRoom(1, 'Здание1', '#100', 10, 1, 1, crStatus(1, 'статус', ''), new Date(), new Date(), new Date(), new Date()), 
+        crStatus(1, 'статус', ''),
+        {idUser: 1, sFam: '', sName: '', sOtch: '', sPhone: '', sEmail: '', 
+            dolg: {idDolg: 1, sDolg: ''}, dep: {idDep: 1, sDep: ''}, role: {idRole: 1, sRole: ''}, 
+            dtIns: new Date(), dtUpd: new Date(), dtDel: new Date()},
+        new Date(), new Date(), new Date()
+    ),
+    createData(555, new Date(), new Date(), 'ком 3', 1, 1, 1, 
+        crRoom(1, 'Здание3', '#300', 30, 1, 1, crStatus(1, 'статус', ''), new Date(), new Date(), new Date(), new Date()), 
+        crStatus(1, 'статус', ''),
+        {idUser: 2, sFam: '', sName: '', sOtch: '', sPhone: '', sEmail: '', 
+            dolg: {idDolg: 1, sDolg: ''}, dep: {idDep: 1, sDep: ''}, role: {idRole: 1, sRole: ''}, 
+            dtIns: new Date(), dtUpd: new Date(), dtDel: new Date()},
+        new Date(), new Date(), new Date()
+    ),
     /*createData(123, new Date(), new Date(), 'Здание 2', '№100', 2, 'Согласовано'),
     createData(222, new Date(), new Date(), 'Здание 3', '№405', 3, 'Отклонено'),
     createData(333, new Date(), new Date(), 'Здание 4', '№541', 5, 'Согласовано'),*/
@@ -84,7 +104,7 @@ export function getOrders() {
 }
 
 // поиск заказа по id
-let order: IOrderData;
+let order: IOrder;
 export function getOrder(id: number) {
     //let order: IOrderData;
     //const findorder = Orders.find(function (item, index, array) { ( item.id = id ) ? true : false })
@@ -98,9 +118,9 @@ export function getOrder(id: number) {
         order.iSeatingPlaces = findorder.iSeatingPlaces
         order.bHasProjector = findorder.bHasProjector
         order.bHasInternet = findorder.bHasInternet
-        order.sAdress = findorder.room.sAddress
-        order.sCabinet = findorder.room.sCabinet
-        order.status = findorder.status.sStatus
+        order.room.sAddress = findorder.room.sAddress
+        order.room.sCabinet = findorder.room.sCabinet
+        order.status.sStatus = findorder.status.sStatus
     }
     return (
         order

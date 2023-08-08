@@ -10,8 +10,22 @@ export interface Cabinet {
   Cabinet: string
 }
 // Роли
-export type IRole = 'user' | 'admin' | 'manager' 
+//export type IRole = 'user' | 'admin' | 'manager' 
+export enum UserRoles {
+  ADMIN = 0,
+  MANAGER = 1,
+  USER = 2,
+}
 
+export enum Statuses {
+  ENABLED = 0,
+  DISABLED = 1,
+  NEW = 10,
+  AGREED = 11,
+  REJECTED = 12,
+  CANCELED_BY_USER = 13,
+  CANCELED_BY_SYSTEM = 14
+}
 
 export interface IDolgnost {
   idDolg: number
@@ -20,10 +34,10 @@ export interface IDolgnost {
 
 export interface IDepartment {
   idDep: number
-  sDDep: string
+  sDep: string
 }
 
-export interface IRole1 {
+export interface IRole {
   idRole: number
   sRole: string
 }
@@ -39,14 +53,17 @@ export interface IRoom {
   sAddress: string
   sCabinet: string
   iSeatingPlaces: number
-  bHasProjector: boolean
-  bHasInternet: boolean
+  bHasProjector: number
+  bHasInternet: number
   status: IStatus
-  dtInEnable: Date //number            // timestamp
-  bDel: boolean
+  dtInEnable: Date            
+  dtIns: Date
+  dtUpd: Date
+  dtDel: Date
 }
 
 export interface IUser {
+  idUser: number
   sFam: string
   sName: string
   sOtch: string
@@ -55,5 +72,45 @@ export interface IUser {
   dolg: IDolgnost
   dep: IDepartment
   role: IRole
-  bDel: boolean
+  dtIns: Date
+  dtUpd: Date
+  dtDel: Date
+}
+
+export interface IOrder {
+  idOrder: number
+  dtBegin: Date            
+  dtEnd: Date
+  sComment: string
+  iSeatingPlaces: number
+  bHasProjector: number
+  bHasInternet: number
+  room: IRoom
+  status: IStatus
+  userAgreement: IUser
+  dtIns: Date
+  dtUpd: Date
+  dtDel: Date
+}
+
+export interface IPageRequest {
+  iPage: number
+  iCountOnPage: number
+}
+
+export interface IDolgListResponse extends Array<IDolgnost> {
+
+}
+
+export interface IDepListResponse extends Array<IDepartment> {
+
+}
+
+export interface IRoleListResponse extends Array<IRole> {
+
+}
+
+export interface IUserToken {
+  idUser: number,
+  role: IRole
 }

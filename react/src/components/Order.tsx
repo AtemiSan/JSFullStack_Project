@@ -1,16 +1,7 @@
 import classes from '../styles/order.module.scss';
-import { IOrder } from '../model/Order';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { IRole } from '../model/reference';
-
-/*export interface IOrderProps {
-  dtTime_from: Date;
-  dtTime_to: Date;
-  sAdress: string;
-  sCabinet: string;
-  sState: string;
-}*/
+import { IOrder, IRole, UserRoles } from '../model/reference';
 
 // для списка кнопок
 export interface ButtonOrder {
@@ -27,7 +18,7 @@ const ButtonsOrder = [
   createData('approve', 'Согласовать'),
   createData('reject', 'Отклонить'),
 ]
-export function Order(props: IOrder, role: IRole) { //IOrderProps) {
+export function Order(props: IOrder, role: IRole) {
 
   const navigate = useNavigate();
   const edit = () => navigate('order')
@@ -48,8 +39,7 @@ export function Order(props: IOrder, role: IRole) { //IOrderProps) {
     return day + '.' + month + '.' + dt.getFullYear() + '  ' + dt.getHours() + ':' + dt.getMinutes();
   }
 
-  //role = 'user'
-  role = 'manager'
+  role.idRole = UserRoles.MANAGER;
   
   return (
     <div className={classes.card}>
@@ -58,8 +48,8 @@ export function Order(props: IOrder, role: IRole) { //IOrderProps) {
       <div className={classes.item}>Помещение :           {props.room.sCabinet}</div>
       <div className={classes.item}>
         <a>Количество человек: <a> </a>{props.iSeatingPlaces}</a><a> </a>
-        <a>Наличие проектора <input className={classes.checkbox} type='checkbox' checked={props.bHasProjector}/></a><a> </a>
-        <a>Наличие интернета <input className={classes.checkbox} type='checkbox' checked={props.bHasInternet}/></a>
+        <a>Наличие проектора <input className={classes.checkbox} type='checkbox' checked={props.bHasProjector ? true : false}/></a><a> </a>
+        <a>Наличие интернета <input className={classes.checkbox} type='checkbox' checked={props.bHasInternet ? true : false}/></a>
         </div>
         <div className={classes.item}>Комментарий: <a> </a> {props.sComment}</div>  
       <div className={classes.item}>Статус согласования : {props.status.sStatus}</div>
@@ -67,8 +57,8 @@ export function Order(props: IOrder, role: IRole) { //IOrderProps) {
         {ButtonsOrder.map(item =>
         <button
           id={item.id}
-          className={( ( role == 'user' && ( item.id == 'approve' || item.id == 'reject' || props.status.sStatus == 'Согласовано') ) ||
-                       ( role == 'manager' && ( item.id == 'cancel' || item.id == 'change' || props.status.sStatus == 'Согласовано' || props.status.sStatus == 'Отклонено') ))? classes.button_nodisplay : classes.button} 
+          className={( ( role.idRole == UserRoles.USER && ( item.id == 'approve' || item.id == 'reject' || props.status.sStatus == 'Согласовано') ) ||
+                       ( role.idRole == UserRoles.MANAGER && ( item.id == 'cancel' || item.id == 'change' || props.status.sStatus == 'Согласовано' || props.status.sStatus == 'Отклонено') ))? classes.button_nodisplay : classes.button} 
           onClick={evt => handleClick(evt, props.idOrder, item.id)}>{item.text}</button>
           )}          
       </div>

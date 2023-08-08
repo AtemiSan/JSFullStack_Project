@@ -1,7 +1,7 @@
 import classes from '../styles/menu.module.scss';
 import common from '../styles/common.module.scss';
 import { useNavigate } from 'react-router-dom';
-import { IRole } from '../model/reference';
+import { IRole, UserRoles } from '../model/reference';
 
 export interface IMenuProps {
 
@@ -32,10 +32,6 @@ export function Menu({}: IMenuProps) {
 
   const navigate = useNavigate();
   
-  //role = 'admin'; 0
-  //role = 'manager'; 1
-  //role = 'user'; 2
-
   return (
     <>
       <div className={common.title}>
@@ -44,9 +40,9 @@ export function Menu({}: IMenuProps) {
       <div className={classes.main}>
       {ButtonsMenu.map(item =>
         <div
-          className={( ( role == 'user' && ( item.id == 'registration' || item.id == 'agreement' )) ||
-                       ( role == 'manager' && ( item.id == 'lk' || item.id == 'create_order' || item.id == 'registration') ) ||
-                       ( role == 'admin' && ( item.id == 'lk' || item.id == 'create_order' || item.id == 'agreement' ))) ? classes.nodisplay : classes.btn} 
+          className={( ( role.idRole == UserRoles.USER && ( item.id == 'registration' || item.id == 'agreement' )) ||
+                       ( role.idRole == UserRoles.MANAGER && ( item.id == 'lk' || item.id == 'create_order' || item.id == 'registration') ) ||
+                       ( role.idRole == UserRoles.ADMIN && ( item.id == 'lk' || item.id == 'create_order' || item.id == 'agreement' ))) ? classes.nodisplay : classes.btn} 
           onClick={() => {navigate(item.navigate)}}>{item.text}</div>
           )}       
       </div>
