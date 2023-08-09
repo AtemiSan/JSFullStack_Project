@@ -9,50 +9,30 @@ export interface IMenuProps {
 }
 
 // для списка кнопок
-/*
-export interface ButtonMenu {
-  id: string
-  navigate: string
-  text: string
-}
-const createData = (
-  id: string,
-  navigate: string,
-  text: string): ButtonMenu => ({ id, navigate, text })
+const ButtonsMenu = getButtonsMenu();
 
-const ButtonsMenu = [
-  createData('profile', 'profile', 'Профиль'),
-  createData('lk', '/lk', 'Мои заявки'),
-  createData('create_order', 'create_order','Подать заявку'),
-  createData('registration', 'registration', 'Регистрация'),
-  createData('agreement', 'agreement', 'Согласование'),
-  createData('references','references', 'Справочники')
-]
-*/
-
-    const ButtonsMenu = getButtonsMenu();
-    
-export function Menu({}: IMenuProps) {
-  let role: IRole = {
-    idRole: 0,
-    sRole: 'админ'
-  };
+export function Menu({ }: IMenuProps) {
+  let role: IRole;
 
   const navigate = useNavigate();
-  
+
+  //role = 'admin'; 0
+  //role = 'manager'; 1
+  //role = 'user'; 2
+
   return (
     <>
       <div className={common.title}>
         Меню
       </div>
       <div className={classes.main}>
-      {ButtonsMenu.map(item =>
-        <div
-          className={( ( role.idRole == UserRoles.USER && ( item.id == 'registration' || item.id == 'agreement' )) ||
-                       ( role.idRole == UserRoles.MANAGER && ( item.id == 'lk' || item.id == 'create_order' || item.id == 'registration') ) ||
-                       ( role.idRole == UserRoles.ADMIN && ( item.id == 'lk' || item.id == 'create_order' || item.id == 'agreement' ))) ? classes.nodisplay : classes.btn} 
-          onClick={() => {navigate(item.navigate)}}>{item.text}</div>
-          )}       
+        {ButtonsMenu.map(item =>
+          <div
+            className={((role.idRole == UserRoles.USER && (item.id == 'registration' || item.id == 'agreement')) ||
+              (role.idRole == UserRoles.MANAGER && (item.id == 'lk' || item.id == 'create_order' || item.id == 'registration')) ||
+              (role.idRole == UserRoles.ADMIN && (item.id == 'lk' || item.id == 'create_order' || item.id == 'agreement'))) ? classes.nodisplay : classes.btn}
+            onClick={() => { navigate(item.navigate) }}>{item.text}</div>
+        )}
       </div>
     </>
   )

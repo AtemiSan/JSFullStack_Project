@@ -1,4 +1,4 @@
-import { IOrderListResponse, IOrderResponse } from "../model/order";
+import { IOrderListResponse, IOrderResponse } from "../model/Order";
 import { IDepartment, IDolgnost, IRole, IRoom, IStatus, IUser } from "../model/data";
 
 // функции для работы с заявками

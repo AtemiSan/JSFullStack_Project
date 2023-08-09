@@ -2,7 +2,7 @@ import classes from '../styles/order.module.scss';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { IRole, IRoom, IStatus, UserRoles } from '../model/data';
-import { IOrderResponse } from '../model/order';
+import { IOrderResponse } from '../model/Order';
 
 // для списка кнопок
 export interface ButtonOrder {
