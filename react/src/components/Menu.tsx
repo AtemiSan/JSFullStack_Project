@@ -16,9 +16,9 @@ export function Menu({ }: IMenuProps) {
 
   const navigate = useNavigate();
 
-  //role = 'admin'; 0
-  //role = 'manager'; 1
-  //role = 'user'; 2
+  //role = {idRole: 0, sRole: 'admin'}
+  role = {idRole: 1, sRole: 'manager'}
+  //role = {idRole: 2, sRole: 'user'}
 
   return (
     <>

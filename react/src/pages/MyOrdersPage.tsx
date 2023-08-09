@@ -8,7 +8,6 @@ export interface IMyOrdersPageProps {
 }
   // получем списов заявок
   const rows = getOrders()
-
 export function MyOrdersPage({ }: IMyOrdersPageProps) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -16,6 +15,7 @@ export function MyOrdersPage({ }: IMyOrdersPageProps) {
     alert('Заявка отправлена');
   }
   
+  console.log(rows);
   if (rows) {
     return (
       <>

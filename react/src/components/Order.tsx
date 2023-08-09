@@ -32,7 +32,7 @@ export interface IOrderProps {
   status: IStatus
 }
 
-export function Order(props: IOrderProps, role: IRole) {
+export function Order(props: IOrderProps) {
 
   const navigate = useNavigate();
   const edit = () => navigate('order')
@@ -53,7 +53,9 @@ export function Order(props: IOrderProps, role: IRole) {
     return day + '.' + month + '.' + dt.getFullYear() + '  ' + dt.getHours() + ':' + dt.getMinutes();
   }
 
-  role.idRole = UserRoles.MANAGER;
+  //let role = {idRole: 0, sRole: 'admin'}
+  let role = {idRole: 1, sRole: 'manager'}
+  //let role = {idRole: 2, sRole: 'user'}
   
   return (
     <div className={classes.card}>
