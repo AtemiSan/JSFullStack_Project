@@ -4,7 +4,7 @@ import classes from '../styles/profile.module.scss';
 import { OrderMain } from '../components/OrderMain';
 import { useParams } from 'react-router-dom';
 import { getOrder } from '../functions/orderFunc';
-import { IOrderResponse } from '../model/Order';
+import { IOrderResponse } from '../model/order';
 
 export interface IOrderPageProps {
 
