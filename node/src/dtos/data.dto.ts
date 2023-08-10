@@ -84,6 +84,6 @@ export interface IRoleListResponse extends Array<IRole> {
 }
 
 export interface IUserToken {
-  idUser: number,
+  idUser: number
   role: IRole
 }

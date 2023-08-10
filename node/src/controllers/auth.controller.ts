@@ -11,7 +11,7 @@ class CAuthController {
       const token = await authService.login(req.body);
       if (token) {
         res.set("Authorization", `Bearer ${token}`);
-        res.status(200).json({ message: 'Пользователь авторизован.' });
+        res.status(200).json({ accessToken: `Bearer ${token}` });
       } else
         res.status(403).json({ message: "Доступ запрещён." });
 

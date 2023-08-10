@@ -1,10 +1,11 @@
 import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config({
   path: `${__dirname}/env/.${process.env.NODE_ENV}.env`
 })
 
-import express from "express";
+import express, { NextFunction } from "express";
 import cookieParser from "cookie-parser";
 import { sequelize } from "./sequelize";
 import router from "./routers";
@@ -13,6 +14,16 @@ import passport from "passport";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 
 const app = express();
+
+let corsOptions = {
+  origin: process.env.ORIGIN,
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}
+
+app.use(cors(corsOptions));
 
 passport.use(
   new JwtStrategy(
@@ -27,7 +38,7 @@ passport.use(
 )
 
 passport.serializeUser((user: any, done) => {
-  done(null, user.idUser)
+  done(null, user)
 })
 
 app.use(cookieParser());

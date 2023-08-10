@@ -5,6 +5,7 @@ import userModel from "../models/user.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sequelize } from "../sequelize";
+import { CUserResponse } from "../classes/user.classes";
 
 
 class CAuthService {
@@ -24,9 +25,11 @@ class CAuthService {
       && loginDTO.sEmail.toLowerCase === user[0].sEmail.toLowerCase 
       && await bcrypt.compare(loginDTO.sPassw, user[0].sPassw))
     {
+      console.log(user[0]);
       const token = jwt.sign({
-          idUser: user[0].id,
-          role: user[0].role
+        idUser: user[0].idUser,
+        role: { idRole: user[0].idRole, sRole: 'role' }
+//        role: user[0].role
         },
         process.env.JWT_SECRET as string
       )
@@ -70,7 +73,7 @@ class CAuthService {
     })
 
     if (user && user.length == 1) {
-      return user[0] as IUserResponse;
+      return new CUserResponse(user[0]);
     } else {
       if (!user) 
         console.log('CAuthService.getProfile: Попытка получения профиля несуществующего пользователя. idUser = ' + reqUser.idUser);
