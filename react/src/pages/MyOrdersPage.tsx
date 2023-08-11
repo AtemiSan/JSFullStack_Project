@@ -1,13 +1,15 @@
 import { randomInt } from 'crypto';
 import { Order } from '../components/Order';
 import common from '../styles/common.module.scss';
-import { getOrders } from '../functions/orderFunc';
+import { getOrderList, getOrders } from '../functions/orderFunc';
 
 export interface IMyOrdersPageProps {
 
 }
   // получем списов заявок
-  const rows = getOrders()
+  let rows = getOrders();   // заглушка
+  //let rows = getOrderList(); // из бэка
+
 export function MyOrdersPage({ }: IMyOrdersPageProps) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

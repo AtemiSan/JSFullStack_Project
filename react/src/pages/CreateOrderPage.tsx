@@ -1,14 +1,20 @@
 import { useState } from 'react';
 import common from '../styles/common.module.scss';
 import classes from '../styles/profile.module.scss';
-import { getFreeBuiding, getFreeCabinets } from '../functions/avialable';
+import { getFreeBuiding, getFreeBuiding1, getFreeCabinets } from '../functions/avialable';
+import { Building } from '../model/data';
+import { IRoomFilters, IRoomListResponse } from '../model/room';
 
 export interface ICreateOrderPageProps {
 
 }
 
 export function CreateOrderPage({ }: ICreateOrderPageProps) {
-
+  // список свободных зданий
+  //let buildings: IRoomListResponse;
+  let roomFilters: IRoomFilters
+  //let places: Array<Building>;
+  
   const [dtTimeF, setDtTimeF] = useState('');
   const [dtTimeT, setDtTimeT] = useState('');
   const [seatingPlaces, setSeatingPlaces] = useState('');
@@ -16,36 +22,53 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
   const [hasInternet, setHasInternet] = useState(false);
   const [comment, setComment] = useState('');
 
-  const handleChangeDtTimeF = (e: React.FormEvent<HTMLInputElement>) => {
+  const handleChangeDtTimeF = async (e: React.FormEvent<HTMLInputElement>) => {
     if (dtTimeT !== '' && e.currentTarget.value == dtTimeT) {
       alert('Время начала и окончания должны отличаться!')
     }
     else {
-      if (dtTimeT < dtTimeF) {
+      if (dtTimeT !== '' && dtTimeT < e.currentTarget.value) {
         alert('Время начала не может быть меньше времени окончания!')
       } else {
         setDtTimeF(e.currentTarget.value)
+        // заполняем фильтр
+        const dateF = new Date(e.currentTarget.value)
+       // roomFilters.dtBegin = dateF; 
+
+        // кидаем запрос
+        const FreeBuiding = getFreeBuiding(roomFilters);
+        places = await FreeBuiding;        
       };
     };
   }
 
-  const handleChangeDtTimeT = (e: React.FormEvent<HTMLInputElement>) => {
+  const handleChangeDtTimeT = async (e: React.FormEvent<HTMLInputElement>) => {
     if (dtTimeF !== '' && e.currentTarget.value == dtTimeF) {
       alert('Время начала и окончания должны отличаться!')
     }
     else {
-      if (dtTimeT < dtTimeF) {
+      if (dtTimeF !== '' && e.currentTarget.value < dtTimeF) {
         alert('Время начала не может быть меньше времени окончания!')
       } else {
         setDtTimeT(e.currentTarget.value)
+        // заполняем фильтр
+        const dateT = new Date(e.currentTarget.value)
+        roomFilters.dtEnd = dateT;  
+
+        // кидаем запрос
+        const FreeBuiding = getFreeBuiding(roomFilters);
+        places = await FreeBuiding;         
       };
     };
+    
   }
 
   const handleChangeSeatingPlaces = (e: React.FormEvent<HTMLInputElement>) => {
     if (e.currentTarget.value !== '' && e.currentTarget.valueAsNumber <= 0) {
       alert('Введите положительное число человек!')
-    } else setSeatingPlaces(e.currentTarget.value);
+    } else {
+      setSeatingPlaces(e.currentTarget.value)
+    };
   }
 
   const handleChangeHasProjector = (e: React.FormEvent<HTMLInputElement>) => {
@@ -65,8 +88,14 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
     alert('Заявка отправлена');
   }
 
-  // списов свободных зданий
-  const places = getFreeBuiding();
+  // список свободных зданий
+  let places = getFreeBuiding1();
+  /*const places = async (data: Building) => {
+    const res = await getFreeBuiding()
+    if (!res) res
+  }*/
+
+
   // список свободных кабинетов
   const cabinets = getFreeCabinets();
 

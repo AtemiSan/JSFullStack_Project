@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import classes from '../styles/profile.module.scss';
-import { getFreeBuiding, getFreeCabinets } from '../functions/avialable';
+import { getFreeBuiding, getFreeBuiding1, getFreeCabinets } from '../functions/avialable';
 import { IOrderProps } from './Order';
 
 export function OrderMain(props: IOrderProps) {
@@ -45,7 +45,7 @@ export function OrderMain(props: IOrderProps) {
     alert('Заявка сохранена');
   }
   // списов свободных зданий
-  const places = getFreeBuiding();
+  const places = getFreeBuiding1();
   // список свободных кабинетов
   const cabinets = getFreeCabinets();
 
