@@ -7,6 +7,7 @@ import { IRoomFilters, IRoomListResponse } from '../model/room';
 import { API_USER_ORDER } from '../settings';
 import { addAuthHeader } from '../functions/headers.func';
 import { IRegisterOrderRequest } from '../model/order';
+import { useNavigate } from 'react-router-dom';
 
 export interface ICreateOrderPageProps {
 
@@ -17,6 +18,8 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
   //let buildings: IRoomListResponse;
   let roomFilters: IRoomFilters
   //let places: Array<Building>;
+
+  const navigate = useNavigate();
 
   const [dtTimeF, setDtTimeF] = useState('');
   const [dtTimeT, setDtTimeT] = useState('');
@@ -115,6 +118,8 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
     });
     if (responsePostOrder.status == 200) {
       alert('Заявка отправлена');
+      // переход на список Заявок
+      navigate('/lk');
     } else {
       alert('Заявка не отправлена. Оишбка при отправке');
     }
