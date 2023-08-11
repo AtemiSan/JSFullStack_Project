@@ -1,7 +1,7 @@
 import classes from '../styles/order.module.scss';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { IRole, IRoom, IStatus, UserRoles } from '../model/data';
+import { IRole, IRoom, IStatus, Statuses, UserRoles } from '../model/data';
 import { IOrderResponse } from '../model/order';
 import { API_USER_ORDER } from '../settings';
 
@@ -70,6 +70,8 @@ export function Order(props: IOrderProps) {
       if (responseDeleteOrder.status == 200) {
          // Удалилось
          alert('Заявка отменена!');
+         // чтобы кнопки пропали 
+         props.status.idStatus = Statuses.CANCELED_BY_USER;
       } else {
         console.log('Bad_resp');
       }          
@@ -104,7 +106,7 @@ export function Order(props: IOrderProps) {
         {ButtonsOrder.map(item =>
           <button
             id={item.id}
-            className={((role.idRole == UserRoles.USER && (item.id == 'approve' || item.id == 'reject' || props.status.sStatus == 'Согласовано')) ||
+            className={((role.idRole == UserRoles.USER && (item.id == 'approve' || item.id == 'reject' || props.status.sStatus == 'Согласовано' || props.status.sStatus == 'Отменено')) ||
               (role.idRole == UserRoles.MANAGER && (item.id == 'cancel' || item.id == 'change' || props.status.sStatus == 'Согласовано' || props.status.sStatus == 'Отклонено'))) ? classes.button_nodisplay : classes.button}
             onClick={evt => handleClick(evt, props.idOrder, item.id)}>{item.text}</button>
         )}

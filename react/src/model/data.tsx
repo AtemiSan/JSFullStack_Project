@@ -18,13 +18,13 @@ export enum UserRoles {
 }
 
 export enum Statuses {
-  ENABLED = 0,
-  DISABLED = 1,
-  NEW = 10,
-  AGREED = 11,
-  REJECTED = 12,
-  CANCELED_BY_USER = 13,
-  CANCELED_BY_SYSTEM = 14
+  ENABLED = 0,  // активно
+  DISABLED = 1,  // не активно
+  NEW = 10,  // новый
+  AGREED = 11,  // согласовать
+  REJECTED = 12,  // отклонить
+  CANCELED_BY_USER = 13,  // отмено польз
+  CANCELED_BY_SYSTEM = 14  // отменено системой
 }
 
 export interface IDolgnost {

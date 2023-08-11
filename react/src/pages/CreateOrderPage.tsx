@@ -4,6 +4,9 @@ import classes from '../styles/profile.module.scss';
 import { getFreeBuiding, getFreeBuiding1, getFreeCabinets } from '../functions/avialable';
 import { Building } from '../model/data';
 import { IRoomFilters, IRoomListResponse } from '../model/room';
+import { API_USER_ORDER } from '../settings';
+import { addAuthHeader } from '../functions/headers.func';
+import { IRegisterOrderRequest } from '../model/order';
 
 export interface ICreateOrderPageProps {
 
@@ -32,8 +35,9 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
       } else {
         setDtTimeF(e.currentTarget.value)
         // заполняем фильтр
-        const dateF = new Date(e.currentTarget.value)
-       // roomFilters.dtBegin = dateF; 
+        const dateF = new Date(e.currentTarget.value)   
+        const dateT = new Date(dtTimeT)
+        roomFilters = { dtBegin: dateF, dtEnd : dateT, adminNotDeleted: false, adminDeletedOnly: false, adminDeletedAdd: false }; 
 
         // кидаем запрос
         const FreeBuiding = getFreeBuiding(roomFilters);
@@ -52,8 +56,9 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
       } else {
         setDtTimeT(e.currentTarget.value)
         // заполняем фильтр
-        const dateT = new Date(e.currentTarget.value)
-        roomFilters.dtEnd = dateT;  
+        const dateT = new Date(e.currentTarget.value)   
+        const dateF = new Date(dtTimeF)
+        roomFilters = { dtBegin: dateF, dtEnd : dateT, adminNotDeleted: false, adminDeletedOnly: false, adminDeletedAdd: false };          
 
         // кидаем запрос
         const FreeBuiding = getFreeBuiding(roomFilters);
@@ -83,18 +88,34 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
     setComment(e.currentTarget.value);
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    let RegisterOrderRequest: IRegisterOrderRequest;
+    const dateF = new Date(dtTimeF)
+    const dateT = new Date(dtTimeT)
+    RegisterOrderRequest = { 
+      dtBegin: dateF,      
+      dtEnd: dateT,
+      sComment: comment,
+      iSeatingPlaces: 0,   //seatingPlaces
+      bHasProjector: hasProjector,
+      bHasInternet: hasInternet,
+      idRoom: 0};
+   // добавление заявки IRegisterOrderRequest / Response 200
+   let headersSet = new Headers();
+   headersSet.append('Content-Type', 'application/json; charset=utf-8');
+   addAuthHeader(headersSet);
+   let responsePostOrder = await fetch(API_USER_ORDER + '/exec', {
+     method: 'POST',
+     headers: headersSet,
+     body: JSON.stringify(RegisterOrderRequest)
+   });   
     alert('Заявка отправлена');
   }
 
   // список свободных зданий
   let places = getFreeBuiding1();
-  /*const places = async (data: Building) => {
-    const res = await getFreeBuiding()
-    if (!res) res
-  }*/
-
 
   // список свободных кабинетов
   const cabinets = getFreeCabinets();
