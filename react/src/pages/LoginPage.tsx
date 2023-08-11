@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { API_PUBLIC_AUTH, API_USER_AUTH } from '../settings';
 import { ILoginRequest } from '../model/auth';
 import { IUserResponse } from '../model/user';
+import { addAuthHeader } from '../functions/headers.func';
 
 export interface ILoginPageProps {
 
@@ -47,7 +48,6 @@ export function LoginPage({}: ILoginPageProps) {
     };
 
     // Запрос токена
-    console.log(API_PUBLIC_AUTH + '/login');
     let responseToken = await fetch(API_PUBLIC_AUTH + '/login', {
       method: 'POST',
       headers: {
@@ -55,22 +55,30 @@ export function LoginPage({}: ILoginPageProps) {
       },
       body: JSON.stringify(data)
     });
-    console.log('fetched');
-    let resultToken = await responseToken.json();
 
-    // Токен получен, запрос профиля
+    // Токен получен
     if (responseToken.status == 200) {
-      let responseProfile = await fetch(API_USER_AUTH + '/getProfile');
-      let resultProfile = await responseProfile.json() as IUserResponse;
+      // Сохраним токен в хранилище
+      let resultToken = await responseToken.json();
+      localStorage.setItem('accessToken', resultToken.accessToken);
+
+      // Отправим запрос профиля
+      let headersSet = new Headers();
+      headersSet.append('Content-Type', 'application/json; charset=utf-8');
+      addAuthHeader(headersSet);
+      let responseProfile = await fetch(API_USER_AUTH + '/getProfile', {
+        method: 'POST',
+        headers: headersSet
+      });
       if (responseProfile.status == 200) {
-        console.log(resultProfile);
-        localStorage.setItem('idUser', (resultProfile.idUser ? resultProfile.idUser.toString : '') as string);
+        let resultProfile = await responseProfile.json() as IUserResponse;
+        localStorage.setItem('user', JSON.stringify(resultProfile));
         navigate('/lk');
       } else {
-        console.log(resultProfile);
+        console.log('Unauthorized');
       }
     } else {
-      console.log(resultToken);
+      console.log('Unauthorized');
     }
   }
 
