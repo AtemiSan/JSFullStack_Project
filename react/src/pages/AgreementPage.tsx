@@ -2,13 +2,37 @@ import { randomInt } from 'crypto';
 import { Order } from '../components/Order';
 import common from '../styles/common.module.scss';
 import { getOrders } from '../functions/orderFunc';
+import { IOrderFilters } from '../model/order';
 
 export interface IAgreementPageProps {
 
 }
 
+let filters: IOrderFilters;
+filters = {   // Для запросов от пользователя
+  userActive: false,       // true - вернуть активные (status = на согласовании и согласованные + время окончания аренды ещё не истекло)
+  userRejected: false,     // true - вернуть отклонённые (status = отклонённые, отменённые + просроченные)
+  userNotDeleted: false,   // true - вернуть все, кроме удалённых
+  userDeletedOnly: false,  // true - вернуть все удалённые
+  userDeletedAdd: false,		// true - вернуть все (удалённые и не удалённые)
+  // Для запросов от согласующего
+  agreeActive: true,           // true - вернуть активные для согласования (status = на согласовании и не просроченные)
+  agreeRejected: false,         // true - вернуть отклонённые (status = отклонённые этим согласующим)
+  agreeAgreemented: false,		   // true - вернуть все согласованные (status = согласованные этим согласующим)
+  agreeNotDeleted: false,
+  agreeDeletedOnly: false,
+  agreeDeletedAdd: false,
+  // Для запросов от администратора
+  adminActive: false,          // true - вернуть активные для согласования (status = на согласовании и не просроченные)
+  adminRejected: false,        // true - вернуть отклонённые (status = отклонённые)
+  adminAgreemented: false,     // true - вернуть все согласованные (status = согласованные)
+  adminNotDeleted: false,
+  adminDeletedOnly: false,
+  adminDeletedAdd: false
+};
 // получем списов заявок
-const rows = getOrders()
+let rows = getOrders();   // заглушка
+//let rows2 = getOrderList(filters); // из бэка
 
 export function AgreementPage({ }: IAgreementPageProps) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

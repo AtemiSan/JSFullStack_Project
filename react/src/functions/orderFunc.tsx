@@ -1,6 +1,7 @@
-import { IOrderListResponse, IOrderResponse } from "../model/order";
+import { IOrderFilters, IOrderListRequest, IOrderListResponse, IOrderResponse } from "../model/order";
 import { IDepartment, IDolgnost, IRole, IRoom, IStatus, IUser } from "../model/data";
 import { API_USER_ORDER } from "../settings";
+import { addAuthHeader } from "./headers.func";
 
 // функции для работы с заявками
 /*const createData = (
@@ -109,17 +110,22 @@ export function getOrders() {
 }
 
 // это запрос из бэка
-export async function getOrderList() {
+export async function getOrderList(filters: IOrderFilters) {
+    let headersSet = new Headers();
+    headersSet.append('Content-Type', 'application/json; charset=utf-8');
+    addAuthHeader(headersSet);
+    
+    let OrderListRequest: IOrderListRequest;
+    OrderListRequest = { iPage: 1, iCountOnPage: 1, filters: filters };
+
     let responseOrders = await fetch(API_USER_ORDER + '/getList', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json; charset=utf-8'
-        },
+        headers: headersSet,
         body: JSON.stringify(OrderListResponse)
     });
 
     if (responseOrders.status == 200) {
-        //Buildings = freeRooms.map(item => createDataB(1, item.sAddress))
+        console.log('Orders_OK');      
     } else {
         console.log('Not_resp');
     }
@@ -127,6 +133,7 @@ export async function getOrderList() {
         OrderListResponse
     )
 }
+
 // поиск заказа по id
 export function getOrder(id: number): IOrderResponse | null {
     const order = Orders.find(item => item.idOrder == id);
