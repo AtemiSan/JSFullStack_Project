@@ -2,6 +2,9 @@ import { ILoginRequest } from "../dtos/auth.dto";
 import { IUserToken } from "../dtos/data.dto";
 import { IChangePasswRequest, IUserResponse } from "../dtos/user.dto";
 import userModel from "../models/user.model";
+import dolgModel from "../models/dolgnost.model";
+import depModel from "../models/department.model";
+import roleModel from "../models/role.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sequelize } from "../sequelize";
@@ -25,11 +28,9 @@ class CAuthService {
       && loginDTO.sEmail.toLowerCase === user[0].sEmail.toLowerCase 
       && await bcrypt.compare(loginDTO.sPassw, user[0].sPassw))
     {
-      console.log(user[0]);
       const token = jwt.sign({
         idUser: user[0].idUser,
         role: { idRole: user[0].idRole, sRole: 'role' }
-//        role: user[0].role
         },
         process.env.JWT_SECRET as string
       )
@@ -69,7 +70,8 @@ class CAuthService {
     const user = await userModel.findAll({
       where: {
         idUser: reqUser.idUser
-      }
+      },
+      include: [dolgModel, depModel, roleModel]
     })
 
     if (user && user.length == 1) {

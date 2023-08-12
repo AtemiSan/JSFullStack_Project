@@ -1,3 +1,5 @@
+import { IRoomResponse } from "./room.dto"
+import { IUserResponse } from "./user.dto"
 
 
 export interface IDolgnost {
@@ -58,9 +60,9 @@ export interface IOrder {
   iSeatingPlaces: number
   bHasProjector: number
   bHasInternet: number
-  room: IRoom
+  room: IRoomResponse
   status: IStatus
-  userAgreement: IUser
+  userAgreement: IUserResponse
   dtIns: Date
   dtUpd: Date
   dtDel: Date

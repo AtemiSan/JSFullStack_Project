@@ -4,8 +4,6 @@ import { IUserToken } from "../dtos/data.dto";
 
 export const UserMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as IUserToken;
-  console.log(user);
-  console.log(req.headers);
   if (user && user.role) {
     next();
   } else {

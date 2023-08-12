@@ -1,11 +1,14 @@
 import orderModel from "../models/order.model";
-import { IOrderChangeStatusRequest, IOrderListRequest, IOrderListResponse, IOrderRequest, IOrderResponse, IRegisterOrderRequest } from "../dtos/order.dto";
+import { IOrderChangeStatusRequest, IOrderListRequest, IOrderRequest, IRegisterOrderRequest } from "../dtos/order.dto";
 import { IUserToken } from "../dtos/data.dto";
 import { Statuses } from "../models/status.model";
-import { UserRoles } from "../models/user.model";
+import userModel, { UserRoles } from "../models/user.model";
+import roomModel from "../models/room.model";
+import statusModel from "../models/status.model";
 import Order_Meeting_Room from "../models/order.model";
 import { Op } from "sequelize";
 import { sequelize } from "../sequelize";
+import { COrderResponse, getOrderListResponse } from "../classes/order.classes";
 
 
 class COrderService {
@@ -16,12 +19,13 @@ class COrderService {
       where: {
         idOrder: reqDTO.idOrder
       },
+      include: [roomModel, statusModel, userModel],
       paranoid: false
     });
 
     if (order && order.length == 1) {
       if (order[0].user.idUser == reqUser.idUser || reqUser.role.idRole == UserRoles.MANAGER || reqUser.role.idRole == UserRoles.ADMIN) {
-        return order[0] as IOrderResponse;
+        return new COrderResponse(order[0]);
       }
     } else {
       if (!order) {
@@ -96,7 +100,8 @@ class COrderService {
               }    
             }
           ]
-        }
+        },
+        include: [roomModel, statusModel, userModel]
       });
     //===========================================================
     // Только отклонённые / отменённые заявки + просроченные (по пользователю)
@@ -117,7 +122,8 @@ class COrderService {
               }
             }
           ]
-        }
+        },
+        include: [roomModel, statusModel, userModel]
       });
     //===========================================================
     // Все заявки, кроме удалённых (по пользователю)
@@ -125,7 +131,8 @@ class COrderService {
       orders = await orderModel.findAll({
         where: {
           idUser: reqUser.idUser
-        }
+        },
+        include: [roomModel, statusModel, userModel]
       });
     //===========================================================
     // Все удалённые заявки (по пользователю)
@@ -136,7 +143,8 @@ class COrderService {
             [Op.not]: null
           },
           idUser: reqUser.idUser
-        }
+        },
+        include: [roomModel, statusModel, userModel]
       });
     //===========================================================
     // Все заявки (по пользователю)
@@ -145,6 +153,7 @@ class COrderService {
         where: {
           idUser: reqUser.idUser
         },
+        include: [roomModel, statusModel, userModel],
         paranoid: false
       });
     //********************************************************************************
@@ -158,7 +167,8 @@ class COrderService {
           dtBegin: {
             [Op.gt]: sequelize.literal('CURRENT_TIMESTAMP')
           }
-        }
+        },
+        include: [roomModel, statusModel, userModel]
       });
     //===========================================================
     // Только отклонённые заявки (по согласующему)
@@ -167,7 +177,8 @@ class COrderService {
         where: {
           idStatus: Statuses.REJECTED,
           idUserAgreement: reqUser.idUser
-        }
+        },
+        include: [roomModel, statusModel, userModel]
       });
     //===========================================================
     // Только согласованные заявки (по согласующему)
@@ -176,7 +187,8 @@ class COrderService {
         where: {
           idStatus: Statuses.AGREED,
           idUserAgreement: reqUser.idUser
-        }
+        },
+        include: [roomModel, statusModel, userModel]
       });
     //===========================================================
     // Все заявки, кроме удалённых (по согласующему)
@@ -184,7 +196,8 @@ class COrderService {
       orders = await orderModel.findAll({
         where: {
           idUserAgreement: reqUser.idUser
-        }
+        },
+        include: [roomModel, statusModel, userModel]
       });
     //===========================================================
     // Все удалённые заявки (по согласующему)
@@ -195,7 +208,8 @@ class COrderService {
             [Op.not]: null
           },
           idUserAgreement: reqUser.idUser
-        }
+        },
+        include: [roomModel, statusModel, userModel]
       });
     //===========================================================
     // Все заявки (по согласующему)
@@ -204,6 +218,7 @@ class COrderService {
         where: {
           idUserAgreement: reqUser.idUser
         },
+        include: [roomModel, statusModel, userModel],
         paranoid: false
       });
     //********************************************************************************
@@ -217,7 +232,8 @@ class COrderService {
           dtBegin: {
             [Op.gt]: sequelize.literal('CURRENT_TIMESTAMP')
           }
-        }
+        },
+        include: [roomModel, statusModel, userModel]
       });
     //===========================================================
     // Только отклонённые заявки (для администратора)
@@ -225,7 +241,8 @@ class COrderService {
       orders = await orderModel.findAll({
         where: {
           idStatus: Statuses.REJECTED
-        }
+        },
+        include: [roomModel, statusModel, userModel]
       });
     //===========================================================
     // Только согласованные заявки (для администратора)
@@ -233,7 +250,8 @@ class COrderService {
       orders = await orderModel.findAll({
         where: {
           idStatus: Statuses.AGREED
-        }
+        },
+        include: [roomModel, statusModel, userModel]
       });
     //===========================================================
     // Все заявки, кроме удалённых (для администратора)
@@ -247,17 +265,19 @@ class COrderService {
           dtDel: {
             [Op.not]: null
           }
-        }
+        },
+        include: [roomModel, statusModel, userModel]
       });
     //===========================================================
     // Все заявки (для администратора)
     } else if (reqDTO.filters.adminDeletedAdd && reqUser.role.idRole == UserRoles.ADMIN) {
       orders = await orderModel.findAll({
+        include: [roomModel, statusModel, userModel],
         paranoid: false
       });
     } else 
       return null;
-    return orders as IOrderListResponse;
+    return getOrderListResponse(orders);
   }
 
   //================================================================================================================================================================================
@@ -276,7 +296,7 @@ class COrderService {
           idStatus: reqDTO.idStatus
         });
 ////      order[0].save();
-        return order[0] as IOrderResponse;
+        return new COrderResponse(order[0]);
       }
     } else {
       if (!order) {

@@ -7,7 +7,7 @@ class CUserController {
   //================================================================================================================================================================================
   async getUser(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body) {
+      if (Object.keys(req.body).length) {
         const user = await userService.getUser(req.body);
         if (user)
           res.json(user);
@@ -26,7 +26,7 @@ class CUserController {
   //================================================================================================================================================================================
   async registerUser(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body) {
+      if (Object.keys(req.body).length) {
         const success = await userService.registerUser(req.body);
         if (success)
           return res.status(201).json({ message: "Пользователь зарегистрирован." });
@@ -45,7 +45,7 @@ class CUserController {
   //================================================================================================================================================================================
   async updateUser(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body) {
+      if (Object.keys(req.body).length) {
         const user = await userService.updateUser(req.body);
         if (user)
           res.json(user);
@@ -64,7 +64,7 @@ class CUserController {
   //================================================================================================================================================================================
   async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body) {
+      if (Object.keys(req.body).length) {
         const success = await userService.deleteUser(req.body);
         if (success)
           return res.status(200).json({ message: 'Пользователь удалён.' })
@@ -83,7 +83,7 @@ class CUserController {
   //================================================================================================================================================================================
   async getList(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body) {
+      if (Object.keys(req.body).length) {
         const users = await userService.getList(req.body);
         if (users)
           res.json(users);

@@ -3,9 +3,11 @@ import { IUserToken } from "../dtos/data.dto";
 import { IRegisterRoomRequest, IRoomListRequest, IRoomListResponse, IRoomRequest, IRoomResponse, IRoomUpdateRequest } from "../dtos/room.dto";
 import Meeting_Room from "../models/room.model";
 import roomModel from "../models/room.model";
-import { Statuses } from "../models/status.model";
+import statusModel, { Statuses } from "../models/status.model";
 import { UserRoles } from "../models/user.model";
 import { sequelize } from "../sequelize";
+import { CRoomResponse, getRoomListResponse } from "../classes/room.classes";
+import { IsNull } from "sequelize-typescript";
 
 
 class CRoomService {
@@ -15,11 +17,12 @@ class CRoomService {
       where: {
         idRoom: reqDTO.idRoom
       },
+      include: statusModel,
       paranoid: false
     });
 
     if (room && room.length == 1) {
-      return room[0] as IRoomResponse;
+      return new CRoomResponse(room[0]);
     } else {
       if (!room) {
         console.log('CRoomService.getRoom: Попытка получить несуществующую запись. idRoom = ' + reqDTO.idRoom);
@@ -65,7 +68,7 @@ class CRoomService {
         dtInEnable: reqDTO.dtInEnable
       });
 ////      room[0].save();
-      return room[0] as IRoomResponse;
+      return new CRoomResponse(room[0]);
     } else {
       if (!room) {
         console.log('CRoomService.updateRoom: Попытка обновить несуществующую запись. idRoom = ' + reqDTO.idRoom);
@@ -101,6 +104,7 @@ class CRoomService {
     let rooms: Meeting_Room[];
     //===========================================================
     // Только свободные переговорные на указанный интервал
+    console.log(reqDTO);
     if (reqDTO.filters.dtBegin && reqDTO.filters.dtEnd) {
       rooms = await sequelize.query(`SELECT A.* FROM MEETING_ROOM A WHERE ID_STATUS = ${Statuses.ENABLED} ` +
           `AND NOT EXISTS(SELECT ID_ORDER FROM ORDER_MEETING_ROOM B WHERE A.ID_ROOM = B.ID_ROOM AND B.ID_STATUS = ${Statuses.AGREED} ` +
@@ -111,29 +115,10 @@ class CRoomService {
           model: roomModel,
           mapToModel: true 
       });
-     rooms = await roomModel.findAll({
-        where: {
-          idStatus: Statuses.ENABLED,
-          $or: [
-            {
-              idStatus: Statuses.NEW,
-              dtBegin: {
-                [Op.gt]: sequelize.literal('CURRENT_TIMESTAMP')
-              }
-            },
-            {
-              idStatus: Statuses.AGREED,
-              dtEnd: {
-                [Op.gt]: sequelize.literal('CURRENT_TIMESTAMP')
-              }    
-            }
-          ]
-        }
-      });
     //===========================================================
     // Все переговорные, кроме удалённых (для администратора)
     } else if (reqDTO.filters.adminNotDeleted && reqUser.role.idRole == UserRoles.ADMIN) {
-      rooms = await roomModel.findAll();
+      rooms = await roomModel.findAll({ include: statusModel });
     //===========================================================
     // Все удалённые заявки (для администратора)
     } else if (reqDTO.filters.adminDeletedOnly && reqUser.role.idRole == UserRoles.ADMIN) {
@@ -142,17 +127,20 @@ class CRoomService {
           dtDel: {
             [Op.not]: null
           }
-        }
+        },
+        include: statusModel
       });
     //===========================================================
     // Все заявки (для администратора)
     } else if (reqDTO.filters.adminDeletedAdd && reqUser.role.idRole == UserRoles.ADMIN) {
       rooms = await roomModel.findAll({
+        include: statusModel,
         paranoid: false
       });
-    } else 
+    } else {
       return null;
-    return rooms as IRoomListResponse;
+    }
+    return getRoomListResponse(rooms);
   }
 }
 

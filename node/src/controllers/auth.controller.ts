@@ -23,14 +23,14 @@ class CAuthController {
   //================================================================================================================================================================================
   async changePassw(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body && req.user) {
+      if (Object.keys(req.body).length && req.user && Object.keys(req.user).length) {
         const success = await authService.changePassw(req.user as IUserToken, req.body);
         if (success)
           res.status(200).json({ message: 'Пароль изменён.' });
         else
           res.status(400).json({ message: "В выполнении операции отказано." });
       } else {
-        if (!req.body)
+        if (!Object.keys(req.body).length)
           console.log('CAuthController.changePassw: Пустой request.body');
         else
           console.log('CAuthController.changePassw: Пустой request.user');
@@ -45,14 +45,14 @@ class CAuthController {
   //================================================================================================================================================================================
   async getProfile(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body && req.user) {
+      if (Object.keys(req.body).length && req.user && Object.keys(req.user).length) {
         const user = await authService.getProfile(req.user as IUserToken);
         if (user)
           res.json(user);
         else
           res.status(400).json({ message: "В выполнении операции отказано." });
         } else {
-        if (!req.body)
+        if (!Object.keys(req.body).length)
           console.log('CAuthController.getProfile: Пустой request.body');
         else
           console.log('CAuthController.getProfile: Пустой request.user');

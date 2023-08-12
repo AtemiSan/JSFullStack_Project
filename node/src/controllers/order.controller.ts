@@ -7,14 +7,14 @@ class COrderController {
   //================================================================================================================================================================================
   async getOrder(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body && req.user) {
+      if (Object.keys(req.body).length && req.user && Object.keys(req.user).length) {
         const order = await orderService.getOrder(req.user as IUserToken, req.body);
         if (order)
           res.json(order);
         else
           res.status(400).json({ message: "В выполнении операции отказано." });
       } else {
-        if (!req.body)
+        if (!Object.keys(req.body).length)
           console.log('COrderController.getOrder: Пустой request.body');
         else
           console.log('COrderController.getOrder: Пустой request.user');
@@ -29,14 +29,14 @@ class COrderController {
   //================================================================================================================================================================================
   async registerOrder(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body && req.user) {
+      if (Object.keys(req.body).length && req.user && Object.keys(req.user).length) {
         const success = await orderService.registerOrder(req.user as IUserToken, req.body);
         if (success)
           return res.status(201).json({ message: "Заявка зарегистрирована." });
         else
           res.status(400).json({ message: "В выполнении операции отказано." });
       } else {
-        if (!req.body)
+        if (!Object.keys(req.body).length)
           console.log('COrderController.registerOrder: Пустой request.body');
         else
           console.log('COrderController.registerOrder: Пустой request.user');
@@ -51,14 +51,14 @@ class COrderController {
   //================================================================================================================================================================================
   async deleteOrder(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body && req.user) {
+      if (Object.keys(req.body).length && req.user && Object.keys(req.user).length) {
         const success = await orderService.deleteOrder(req.user as IUserToken, req.body);
         if (success)
           return res.status(200).json({ message: 'Заявка удалена.' })
         else
           res.status(400).json({ message: "В выполнении операции отказано." });
       } else {
-        if (!req.body)
+        if (!Object.keys(req.body).length)
           console.log('COrderController.deleteOrder: Пустой request.body');
         else
           console.log('COrderController.deleteOrder: Пустой request.user');
@@ -73,11 +73,11 @@ class COrderController {
   //================================================================================================================================================================================
   async getList(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body && req.user) {
+      if (Object.keys(req.body).length && req.user && Object.keys(req.user).length) {
         const orders = await orderService.getList(req.user as IUserToken, req.body);
         res.json(orders);
       } else {
-        if (!req.body)
+        if (!Object.keys(req.body).length)
           console.log('COrderController.getList: Пустой request.body');
         else
           console.log('COrderController.getList: Пустой request.user');
@@ -92,14 +92,14 @@ class COrderController {
   //================================================================================================================================================================================
   async changeStatus(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body && req.user) {
+      if (Object.keys(req.body).length && req.user && Object.keys(req.user).length) {
         const order = await orderService.changeStatus(req.user as IUserToken, req.body);
         if (order)
           res.json(order);
         else
           res.status(400).json({ message: "В выполнении операции отказано." });
       } else {
-        if (!req.body)
+        if (!Object.keys(req.body).length)
           console.log('COrderController.changeStatus: Пустой request.body');
         else
           console.log('COrderController.changeStatus: Пустой request.user');

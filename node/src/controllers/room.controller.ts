@@ -8,7 +8,7 @@ class CRoomController {
   //================================================================================================================================================================================
   async getRoom(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body) {
+      if (Object.keys(req.body).length) {
         const room = await roomService.getRoom(req.body);
         if (room)
           res.json(room);
@@ -27,7 +27,7 @@ class CRoomController {
   //================================================================================================================================================================================
   async registerRoom(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body) {
+      if (Object.keys(req.body).length) {
         const success = await roomService.registerRoom(req.body);
         if (success)
           return res.status(201).json({ message: "Переговорная зарегистрирована." });
@@ -46,7 +46,7 @@ class CRoomController {
   //================================================================================================================================================================================
   async updateRoom(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body) {
+      if (Object.keys(req.body).length) {
         const room = await roomService.updateRoom(req.body);
         if (room)
           res.json(room);
@@ -65,7 +65,7 @@ class CRoomController {
   //================================================================================================================================================================================
   async deleteRoom(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body) {
+      if (Object.keys(req.body).length) {
         const success = await roomService.deleteRoom(req.body);
         if (success)
           return res.status(200).json({ message: 'Заявка удалена.' })
@@ -84,11 +84,11 @@ class CRoomController {
   //================================================================================================================================================================================
   async getList(req: Request, res: Response, next: NextFunction) {
     try {
-      if (req.body && req.user) {
+      if (Object.keys(req.body).length && req.user && Object.keys(req.user).length) {
         const rooms = await roomService.getList(req.user as IUserToken, req.body);
         res.json(rooms);
       } else {
-        if (!req.body)
+        if (!Object.keys(req.body).length)
           console.log('CRoomController.getList: Пустой request.body');
         else
           console.log('CRoomController.getList: Пустой request.user');

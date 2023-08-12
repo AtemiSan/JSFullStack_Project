@@ -1,7 +1,11 @@
 import usersModel from "../models/user.model";
+import dolgModel from "../models/dolgnost.model";
+import depModel from "../models/department.model";
+import roleModel from "../models/role.model";
 import { IRegisterUserRequest, IUserRequest, IUserResponse, IUserUpdateRequest, IUserListRequest, IUserListResponse } from "../dtos/user.dto";
 import bcrypt from "bcrypt";
 import { Op } from "sequelize";
+import { CUserResponse, getUserListResponse } from "../classes/user.classes";
 
 
 class CUserService {
@@ -12,11 +16,12 @@ class CUserService {
       where: {
         idUser: reqDTO.idUser
       },
+      include: [dolgModel, depModel, roleModel],
       paranoid: false
     });
 
     if (user && user.length == 1) {
-      return user[0] as IUserResponse;
+      return new CUserResponse(user[0]);
     } else {
       if (!user) {
         console.log('CUserService.getUser: Попытка получить несуществующего пользователя. idUser = ' + reqDTO.idUser);
@@ -75,7 +80,7 @@ class CUserService {
         user[0].destroy();
       }
 ////      user[0].save();
-      return user[0] as IUserResponse;
+      return new CUserResponse(user[0]);
     } else {
       if (!user) {
         console.log('CUserService.updateUser: Попытка обновить несуществующего пользователя. idUser = ' + reqDTO.idUser);
@@ -116,6 +121,7 @@ class CUserService {
             [Op.not]: null
           }
         },
+        include: [dolgModel, depModel, roleModel],
         paranoid: false
       });
     } else if (reqDTO.filters.deletedAdd) {
@@ -126,7 +132,7 @@ class CUserService {
       users = await usersModel.findAll();
     }
 
-    return users as IUserListResponse;
+    return getUserListResponse(users);
   }
 }
 

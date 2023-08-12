@@ -102,3 +102,19 @@ CREATE TRIGGER ORDER_MEETING_ROOM_BI_TR before insert on ORDER_MEETING_ROOM
 
 
 
+insert into MEETING_ROOM (s_address, s_cabinet, i_seating_places, b_has_projector, b_has_internet, id_status) 
+	values ('building 1', '314', 25, 1, 0, 0);
+insert into MEETING_ROOM (s_address, s_cabinet, i_seating_places, b_has_projector, b_has_internet, id_status) 
+	values ('building 1', '215', 10, 1, 1, 0);
+insert into MEETING_ROOM (s_address, s_cabinet, i_seating_places, b_has_projector, b_has_internet, id_status) 
+	values ('building 1', '308', 40, 1, 1, 1);
+insert into MEETING_ROOM (s_address, s_cabinet, i_seating_places, b_has_projector, b_has_internet, id_status) 
+	values ('building 2', '326', 30, 1, 1, 0);
+insert into MEETING_ROOM (s_address, s_cabinet, i_seating_places, b_has_projector, b_has_internet, id_status) 
+	values ('building 2', '327', 25, 1, 1, 0);
+insert into MEETING_ROOM (s_address, s_cabinet, i_seating_places, b_has_projector, b_has_internet, id_status) 
+	values ('building 2', '214', 20, 0, 1, 0);
+insert into MEETING_ROOM (s_address, s_cabinet, i_seating_places, b_has_projector, b_has_internet, id_status) 
+	values ('building 3', '115', 35, 1, 1, 0);
+insert into MEETING_ROOM (s_address, s_cabinet, i_seating_places, b_has_projector, b_has_internet, id_status) 
+	values ('building 3', '114', 25, 1, 0, 0);
