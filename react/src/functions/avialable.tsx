@@ -1,6 +1,7 @@
 import { Building, Cabinet } from "../model/data"
-import { IRoomFilters, IRoomListResponse } from "../model/room"
-import { API_ADMIN_ROOM, API_USER_AUTH } from "../settings"
+import { IRoomFilters, IRoomListRequest, IRoomListResponse } from "../model/room"
+import { API_ADMIN_ROOM, API_USER_AUTH, API_USER_ROOM } from "../settings"
+import { addAuthHeader } from "./headers.func"
 
 // Свободные здания
 const createDataB = (
@@ -24,7 +25,7 @@ export function getFreeBuiding1() {
 
 // для реального запроса
 let Buildings: Array<Building>;
-let freeRooms: IRoomListResponse;
+let freeRooms: IRoomListRequest;
 
 /* export interface IRoomFilters {
    dtBegin: Date | null    // дата начала аренды (null - если фильтрация не нужна), для получения списка доступных переговорных
@@ -36,17 +37,21 @@ let freeRooms: IRoomListResponse;
  // реальный запрос свободных Зданий
 export async function getFreeBuiding(filters: IRoomFilters) {
 
-  let responseBuilding = await fetch(API_ADMIN_ROOM + '/exec', {
+  freeRooms = { iPage: 0, iCountOnPage: 0 , filters: filters }; 
+
+  let headersSet = new Headers();
+  headersSet.append('Content-Type', 'application/json; charset=utf-8');
+  addAuthHeader(headersSet);
+  let responseBuilding = await fetch(API_USER_ROOM + '/getList', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
+    headers: headersSet,
     body: JSON.stringify(freeRooms)
-  }); 
+  });
 
   if (responseBuilding.status == 200) {
      // Добавить удаление повторяющихся
-     Buildings = freeRooms.map(item => createDataB(1, item.sAddress))
+     let resultBuildings = await responseBuilding.json() as IRoomListResponse;
+     Buildings = resultBuildings.map(item => createDataB(1, item.sAddress))
   } else {
     console.log('Not_resp');
   }

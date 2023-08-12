@@ -4,6 +4,10 @@ import classes from '../styles/profile.module.scss';
 import { getFreeBuiding, getFreeBuiding1, getFreeCabinets } from '../functions/avialable';
 import { Building } from '../model/data';
 import { IRoomFilters, IRoomListResponse } from '../model/room';
+import { API_USER_ORDER } from '../settings';
+import { addAuthHeader } from '../functions/headers.func';
+import { IRegisterOrderRequest } from '../model/order';
+import { useNavigate } from 'react-router-dom';
 
 export interface ICreateOrderPageProps {
 
@@ -14,10 +18,12 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
   //let buildings: IRoomListResponse;
   let roomFilters: IRoomFilters
   //let places: Array<Building>;
-  
+
+  const navigate = useNavigate();
+
   const [dtTimeF, setDtTimeF] = useState('');
   const [dtTimeT, setDtTimeT] = useState('');
-  const [seatingPlaces, setSeatingPlaces] = useState('');
+  const [seatingPlaces, setSeatingPlaces] = useState(0);
   const [hasProjector, setHasProjector] = useState(false);
   const [hasInternet, setHasInternet] = useState(false);
   const [comment, setComment] = useState('');
@@ -33,11 +39,12 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
         setDtTimeF(e.currentTarget.value)
         // заполняем фильтр
         const dateF = new Date(e.currentTarget.value)
-       // roomFilters.dtBegin = dateF; 
+        const dateT = new Date(dtTimeT)
+        roomFilters = { dtBegin: dateF, dtEnd: dateT, adminNotDeleted: false, adminDeletedOnly: false, adminDeletedAdd: false };
 
         // кидаем запрос
         const FreeBuiding = getFreeBuiding(roomFilters);
-        places = await FreeBuiding;        
+        places = await FreeBuiding;
       };
     };
   }
@@ -53,21 +60,22 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
         setDtTimeT(e.currentTarget.value)
         // заполняем фильтр
         const dateT = new Date(e.currentTarget.value)
-        roomFilters.dtEnd = dateT;  
+        const dateF = new Date(dtTimeF)
+        roomFilters = { dtBegin: dateF, dtEnd: dateT, adminNotDeleted: false, adminDeletedOnly: false, adminDeletedAdd: false };
 
         // кидаем запрос
         const FreeBuiding = getFreeBuiding(roomFilters);
-        places = await FreeBuiding;         
+        places = await FreeBuiding;
       };
     };
-    
+
   }
 
   const handleChangeSeatingPlaces = (e: React.FormEvent<HTMLInputElement>) => {
     if (e.currentTarget.value !== '' && e.currentTarget.valueAsNumber <= 0) {
       alert('Введите положительное число человек!')
     } else {
-      setSeatingPlaces(e.currentTarget.value)
+      setSeatingPlaces(e.currentTarget.valueAsNumber)
     };
   }
 
@@ -83,18 +91,42 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
     setComment(e.currentTarget.value);
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert('Заявка отправлена');
+
+    let RegisterOrderRequest: IRegisterOrderRequest;
+    const dateF = new Date(dtTimeF)
+    const dateT = new Date(dtTimeT)
+    RegisterOrderRequest = {
+      dtBegin: dateF,
+      dtEnd: dateT,
+      sComment: comment,
+      iSeatingPlaces: seatingPlaces,
+      bHasProjector: hasProjector,
+      bHasInternet: hasInternet,
+      idRoom: 0
+    };   // номер комнаты передать ??
+
+    // добавление заявки IRegisterOrderRequest / Response 200
+    let headersSet = new Headers();
+    headersSet.append('Content-Type', 'application/json; charset=utf-8');
+    addAuthHeader(headersSet);
+    let responsePostOrder = await fetch(API_USER_ORDER + '/exec', {
+      method: 'POST',
+      headers: headersSet,
+      body: JSON.stringify(RegisterOrderRequest)
+    });
+    if (responsePostOrder.status == 200) {
+      alert('Заявка отправлена');
+      // переход на список Заявок
+      navigate('/lk');
+    } else {
+      alert('Заявка не отправлена. Оишбка при отправке');
+    }
   }
 
   // список свободных зданий
   let places = getFreeBuiding1();
-  /*const places = async (data: Building) => {
-    const res = await getFreeBuiding()
-    if (!res) res
-  }*/
-
 
   // список свободных кабинетов
   const cabinets = getFreeCabinets();
