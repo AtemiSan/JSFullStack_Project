@@ -45,17 +45,14 @@ class CAuthController {
   //================================================================================================================================================================================
   async getProfile(req: Request, res: Response, next: NextFunction) {
     try {
-      if (Object.keys(req.body).length && req.user && Object.keys(req.user).length) {
+      if (req.user && Object.keys(req.user).length) {
         const user = await authService.getProfile(req.user as IUserToken);
         if (user)
           res.json(user);
         else
           res.status(400).json({ message: "В выполнении операции отказано." });
-        } else {
-        if (!Object.keys(req.body).length)
-          console.log('CAuthController.getProfile: Пустой request.body');
-        else
-          console.log('CAuthController.getProfile: Пустой request.user');
+      } else {
+        console.log('CAuthController.getProfile: Пустой request.user');
         res.status(400).json({ message: "В выполнении операции отказано." });
       }
 
