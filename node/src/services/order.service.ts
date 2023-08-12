@@ -3,6 +3,7 @@ import { IOrderChangeStatusRequest, IOrderListRequest, IOrderRequest, IRegisterO
 import { IUserToken } from "../dtos/data.dto";
 import { Statuses } from "../models/status.model";
 import userModel, { UserRoles } from "../models/user.model";
+import agreeUserModel from "../models/user.model";
 import roomModel from "../models/room.model";
 import statusModel from "../models/status.model";
 import Order_Meeting_Room from "../models/order.model";
@@ -86,7 +87,7 @@ class COrderService {
       orders = await orderModel.findAll({
         where: {
           idUser: reqUser.idUser,
-          $or: [
+          [Op.or]: [
             {
               idStatus: Statuses.NEW,
               dtBegin: {
@@ -97,11 +98,11 @@ class COrderService {
               idStatus: Statuses.AGREED,
               dtEnd: {
                 [Op.gt]: sequelize.literal('CURRENT_TIMESTAMP')
-              }    
+              }
             }
           ]
         },
-        include: [roomModel, statusModel, userModel]
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}]
       });
     //===========================================================
     // Только отклонённые / отменённые заявки + просроченные (по пользователю)
@@ -109,7 +110,7 @@ class COrderService {
       orders = await orderModel.findAll({
         where: {
           idUser: reqUser.idUser,
-          $or: [
+          [Op.or]: [
             {
               idStatus: {
                 [Op.in]: [Statuses.REJECTED, Statuses.CANCELED_BY_USER, Statuses.CANCELED_BY_SYSTEM]
@@ -123,7 +124,7 @@ class COrderService {
             }
           ]
         },
-        include: [roomModel, statusModel, userModel]
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}]
       });
     //===========================================================
     // Все заявки, кроме удалённых (по пользователю)
@@ -132,7 +133,7 @@ class COrderService {
         where: {
           idUser: reqUser.idUser
         },
-        include: [roomModel, statusModel, userModel]
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}]
       });
     //===========================================================
     // Все удалённые заявки (по пользователю)
@@ -144,7 +145,7 @@ class COrderService {
           },
           idUser: reqUser.idUser
         },
-        include: [roomModel, statusModel, userModel]
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}]
       });
     //===========================================================
     // Все заявки (по пользователю)
@@ -153,7 +154,7 @@ class COrderService {
         where: {
           idUser: reqUser.idUser
         },
-        include: [roomModel, statusModel, userModel],
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}],
         paranoid: false
       });
     //********************************************************************************
@@ -168,7 +169,7 @@ class COrderService {
             [Op.gt]: sequelize.literal('CURRENT_TIMESTAMP')
           }
         },
-        include: [roomModel, statusModel, userModel]
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}]
       });
     //===========================================================
     // Только отклонённые заявки (по согласующему)
@@ -178,7 +179,7 @@ class COrderService {
           idStatus: Statuses.REJECTED,
           idUserAgreement: reqUser.idUser
         },
-        include: [roomModel, statusModel, userModel]
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}]
       });
     //===========================================================
     // Только согласованные заявки (по согласующему)
@@ -188,7 +189,7 @@ class COrderService {
           idStatus: Statuses.AGREED,
           idUserAgreement: reqUser.idUser
         },
-        include: [roomModel, statusModel, userModel]
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}]
       });
     //===========================================================
     // Все заявки, кроме удалённых (по согласующему)
@@ -197,7 +198,7 @@ class COrderService {
         where: {
           idUserAgreement: reqUser.idUser
         },
-        include: [roomModel, statusModel, userModel]
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}]
       });
     //===========================================================
     // Все удалённые заявки (по согласующему)
@@ -209,7 +210,7 @@ class COrderService {
           },
           idUserAgreement: reqUser.idUser
         },
-        include: [roomModel, statusModel, userModel]
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}]
       });
     //===========================================================
     // Все заявки (по согласующему)
@@ -218,7 +219,7 @@ class COrderService {
         where: {
           idUserAgreement: reqUser.idUser
         },
-        include: [roomModel, statusModel, userModel],
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}],
         paranoid: false
       });
     //********************************************************************************
@@ -233,7 +234,7 @@ class COrderService {
             [Op.gt]: sequelize.literal('CURRENT_TIMESTAMP')
           }
         },
-        include: [roomModel, statusModel, userModel]
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}]
       });
     //===========================================================
     // Только отклонённые заявки (для администратора)
@@ -242,7 +243,7 @@ class COrderService {
         where: {
           idStatus: Statuses.REJECTED
         },
-        include: [roomModel, statusModel, userModel]
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}]
       });
     //===========================================================
     // Только согласованные заявки (для администратора)
@@ -251,12 +252,14 @@ class COrderService {
         where: {
           idStatus: Statuses.AGREED
         },
-        include: [roomModel, statusModel, userModel]
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}]
       });
     //===========================================================
     // Все заявки, кроме удалённых (для администратора)
     } else if (reqDTO.filters.adminNotDeleted && reqUser.role.idRole == UserRoles.ADMIN) {
-      orders = await orderModel.findAll();
+      orders = await orderModel.findAll({
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}]
+      });
     //===========================================================
     // Все удалённые заявки (для администратора)
     } else if (reqDTO.filters.adminDeletedOnly && reqUser.role.idRole == UserRoles.ADMIN) {
@@ -266,13 +269,13 @@ class COrderService {
             [Op.not]: null
           }
         },
-        include: [roomModel, statusModel, userModel]
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}]
       });
     //===========================================================
     // Все заявки (для администратора)
     } else if (reqDTO.filters.adminDeletedAdd && reqUser.role.idRole == UserRoles.ADMIN) {
       orders = await orderModel.findAll({
-        include: [roomModel, statusModel, userModel],
+        include: [{model: userModel, as: 'user'}, roomModel, statusModel, {model: userModel, as: 'userAgreement'}],
         paranoid: false
       });
     } else 

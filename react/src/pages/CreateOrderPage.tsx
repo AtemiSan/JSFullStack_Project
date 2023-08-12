@@ -21,54 +21,33 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
 
   const navigate = useNavigate();
 
-  const [dtTimeF, setDtTimeF] = useState('');
-  const [dtTimeT, setDtTimeT] = useState('');
-  const [seatingPlaces, setSeatingPlaces] = useState(0);
-  const [hasProjector, setHasProjector] = useState(false);
-  const [hasInternet, setHasInternet] = useState(false);
-  const [comment, setComment] = useState('');
+  const [fDtBegin, setDtBegin] = useState('');
+  const [fDtEnd, setDtEnd] = useState('');
+  const [fSeatingPlaces, setSeatingPlaces] = useState(0);
+  const [fHasProjector, setHasProjector] = useState(false);
+  const [fHasInternet, setHasInternet] = useState(false);
+  const [fComment, setComment] = useState('');
 
-  const handleChangeDtTimeF = async (e: React.FormEvent<HTMLInputElement>) => {
-    if (dtTimeT !== '' && e.currentTarget.value == dtTimeT) {
-      alert('Время начала и окончания должны отличаться!')
+  const handleChangeDtBegin = async (e: React.FormEvent<HTMLInputElement>) => {
+    setDtBegin(e.currentTarget.value);
+    // заполняем фильтр
+    let roomFilters: IRoomFilters;
+    if (fDtBegin !== '' && fDtEnd !== '') {
+      roomFilters = { dtBegin: new Date(fDtBegin), dtEnd: new Date(fDtEnd), adminNotDeleted: false, adminDeletedOnly: false, adminDeletedAdd: false };
+      // кидаем запрос
+      places = await getFreeBuiding(roomFilters);
     }
-    else {
-      if (dtTimeT !== '' && dtTimeT < e.currentTarget.value) {
-        alert('Время начала не может быть меньше времени окончания!')
-      } else {
-        setDtTimeF(e.currentTarget.value)
-        // заполняем фильтр
-        const dateF = new Date(e.currentTarget.value)
-        const dateT = new Date(dtTimeT)
-        roomFilters = { dtBegin: dateF, dtEnd: dateT, adminNotDeleted: false, adminDeletedOnly: false, adminDeletedAdd: false };
-
-        // кидаем запрос
-        const FreeBuiding = getFreeBuiding(roomFilters);
-        places = await FreeBuiding;
-      };
-    };
   }
 
-  const handleChangeDtTimeT = async (e: React.FormEvent<HTMLInputElement>) => {
-    if (dtTimeF !== '' && e.currentTarget.value == dtTimeF) {
-      alert('Время начала и окончания должны отличаться!')
+  const handleChangefDtEnd = async (e: React.FormEvent<HTMLInputElement>) => {
+    setDtEnd(e.currentTarget.value);
+    // заполняем фильтр
+    let roomFilters: IRoomFilters;
+    if (fDtBegin !== '' && fDtEnd !== '') {
+      roomFilters = { dtBegin: new Date(fDtBegin), dtEnd: new Date(fDtEnd), adminNotDeleted: false, adminDeletedOnly: false, adminDeletedAdd: false };
+      // кидаем запрос
+      places = await getFreeBuiding(roomFilters);
     }
-    else {
-      if (dtTimeF !== '' && e.currentTarget.value < dtTimeF) {
-        alert('Время начала не может быть меньше времени окончания!')
-      } else {
-        setDtTimeT(e.currentTarget.value)
-        // заполняем фильтр
-        const dateT = new Date(e.currentTarget.value)
-        const dateF = new Date(dtTimeF)
-        roomFilters = { dtBegin: dateF, dtEnd: dateT, adminNotDeleted: false, adminDeletedOnly: false, adminDeletedAdd: false };
-
-        // кидаем запрос
-        const FreeBuiding = getFreeBuiding(roomFilters);
-        places = await FreeBuiding;
-      };
-    };
-
   }
 
   const handleChangeSeatingPlaces = (e: React.FormEvent<HTMLInputElement>) => {
@@ -80,11 +59,11 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
   }
 
   const handleChangeHasProjector = (e: React.FormEvent<HTMLInputElement>) => {
-    setHasProjector(!hasProjector);
+    setHasProjector(!fHasProjector);
   }
 
   const handleChangeHasInternet = (e: React.FormEvent<HTMLInputElement>) => {
-    setHasInternet(!hasInternet);
+    setHasInternet(!fHasInternet);
   }
 
   const handleChangeComment = (e: React.FormEvent<HTMLInputElement>) => {
@@ -94,34 +73,41 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    let RegisterOrderRequest: IRegisterOrderRequest;
-    const dateF = new Date(dtTimeF)
-    const dateT = new Date(dtTimeT)
-    RegisterOrderRequest = {
-      dtBegin: dateF,
-      dtEnd: dateT,
-      sComment: comment,
-      iSeatingPlaces: seatingPlaces,
-      bHasProjector: hasProjector,
-      bHasInternet: hasInternet,
-      idRoom: 0
-    };   // номер комнаты передать ??
-
-    // добавление заявки IRegisterOrderRequest / Response 200
-    let headersSet = new Headers();
-    headersSet.append('Content-Type', 'application/json; charset=utf-8');
-    addAuthHeader(headersSet);
-    let responsePostOrder = await fetch(API_USER_ORDER + '/exec', {
-      method: 'POST',
-      headers: headersSet,
-      body: JSON.stringify(RegisterOrderRequest)
-    });
-    if (responsePostOrder.status == 200) {
-      alert('Заявка отправлена');
-      // переход на список Заявок
-      navigate('/lk');
+    if (fDtBegin === '') {
+      alert('Необходимо указать Время начала.');
+    } else if (fDtEnd === '') {
+      alert('Необходимо указать Время окончания.');
+    } else if (fDtBegin === fDtEnd) {
+      alert('Время начала и окончания должны отличаться.')
+    } else if (new Date(fDtEnd) < new Date(fDtBegin)) {
+      alert('Время начала не может быть меньше времени окончания.')
     } else {
-      alert('Заявка не отправлена. Оишбка при отправке');
+      let RegisterOrderRequest: IRegisterOrderRequest = {
+        dtBegin: new Date(fDtBegin),
+        dtEnd: new Date(fDtEnd),
+        sComment: fComment,
+        iSeatingPlaces: fSeatingPlaces,
+        bHasProjector: fHasProjector,
+        bHasInternet: fHasInternet,
+        idRoom: 0
+      };   // номер комнаты передать ??
+
+      // добавление заявки IRegisterOrderRequest / Response 200
+      let headersSet = new Headers();
+      headersSet.append('Content-Type', 'application/json; charset=utf-8');
+      addAuthHeader(headersSet);
+      let responsePostOrder = await fetch(API_USER_ORDER + '/exec', {
+        method: 'POST',
+        headers: headersSet,
+        body: JSON.stringify(RegisterOrderRequest)
+      });
+      if (responsePostOrder.status == 200) {
+        alert('Заявка отправлена');
+        // переход на список Заявок
+        navigate('/lk');
+      } else {
+        alert('Заявка не отправлена. Оишбка при отправке');
+      }
     }
   }
 
@@ -138,22 +124,22 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
         <form className={classes.form} onSubmit={handleSubmit}>
           <label >
             Дата и время начала
-            <input className={classes.input} type='datetime-local' value={dtTimeF} onChange={handleChangeDtTimeF} required />
+            <input className={classes.input} type='datetime-local' value={fDtBegin} onChange={handleChangeDtBegin} required />
           </label>
           <label>
             Дата и время окончания
-            <input className={classes.input} type='datetime-local' value={dtTimeT} onChange={handleChangeDtTimeT} required />
+            <input className={classes.input} type='datetime-local' value={fDtEnd} onChange={handleChangefDtEnd} required />
           </label>
           <label>
             Количество человек
-            <input className={classes.input} type='number' placeholder='Количество человек' value={seatingPlaces} onChange={handleChangeSeatingPlaces} required />
+            <input className={classes.input} type='number' placeholder='Количество человек' value={fSeatingPlaces} onChange={handleChangeSeatingPlaces} required />
           </label>
           <label className={classes.block}>
-            <input className={classes.checkbox} type='checkbox' checked={hasProjector} onChange={handleChangeHasProjector} />
+            <input className={classes.checkbox} type='checkbox' checked={fHasProjector} onChange={handleChangeHasProjector} />
             Наличие проектора
           </label>
           <label className={classes.block}>
-            <input className={classes.checkbox} type='checkbox' checked={hasInternet} onChange={handleChangeHasInternet} />
+            <input className={classes.checkbox} type='checkbox' checked={fHasInternet} onChange={handleChangeHasInternet} />
             Наличие интернета
           </label>
           <label>
@@ -172,7 +158,7 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
           </label>
           <label>
             Комментарий
-            <input className={classes.input} type='string' placeholder='Комментарий' value={comment} onChange={handleChangeComment} />
+            <input className={classes.input} type='string' placeholder='Комментарий' value={fComment} onChange={handleChangeComment} />
           </label>
           <input className={classes.btn} type='submit' name='submit' value='Отправить' />
         </form>
