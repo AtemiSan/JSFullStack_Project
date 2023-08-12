@@ -1,13 +1,29 @@
 import { randomInt } from 'crypto';
 import { Order } from '../components/Order';
 import common from '../styles/common.module.scss';
-import { getOrderList, getOrders } from '../functions/orderFunc';
-import { IOrderFilters } from '../model/order';
-import { IRole } from '../model/data';
+import { getOrders } from '../functions/orderFunc';
+import { IOrderFilters, IOrderListResponse, IOrderResponse } from '../model/order';
+import { IRole, IRoom, IStatus, IUser } from '../model/data';
 
 export interface IMyOrdersPageProps {
 
 }
+
+const createData = (
+  idOrder: number,
+  dtBegin: Date,
+  dtEnd: Date,
+  sComment: string,
+  iSeatingPlaces: number,
+  bHasProjector: number,
+  bHasInternet: number,
+  room: IRoom,
+  status: IStatus,
+  userAgreement: IUser,
+  dtIns: Date,
+  dtUpd: Date,
+  dtDel: Date): IOrderResponse => ({ idOrder, dtBegin, dtEnd, sComment, iSeatingPlaces, bHasProjector, bHasInternet, room, status, userAgreement, dtIns, dtUpd, dtDel })
+
 
 let filters: IOrderFilters;
 filters = {   // Для запросов от пользователя
@@ -32,17 +48,21 @@ filters = {   // Для запросов от пользователя
   adminDeletedAdd: false
 };
 // получем списов заявок
-let rows = getOrders();   // заглушка
-//let rows2 = getOrderList(filters); // из бэка
+let rows = getOrders(filters);   // заглушка
+//const oderList = getOrderList(filters); // из бэка
+//let rows: Array<IOrderListResponse>;
+//rows = oderList.map(item => createDataB(1, item.sAddress))
 
 export function MyOrdersPage({ }: IMyOrdersPageProps) {
+
+  //rows = (await oderList).map(item => createData(item.idOrder))
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     alert('Заявка отправлена');
   }
 
-  if (rows) {
+  if (rows != null) {
     return (
       <>
         <div className={common.title}>
@@ -64,5 +84,8 @@ export function MyOrdersPage({ }: IMyOrdersPageProps) {
       </>
     )
   } else
-    return null;
+    return (
+      <div className={common.title}>
+        Заявок нет
+      </div>);
 }

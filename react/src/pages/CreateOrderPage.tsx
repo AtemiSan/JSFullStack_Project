@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import common from '../styles/common.module.scss';
 import classes from '../styles/profile.module.scss';
-import { getFreeBuiding, getFreeBuiding1, getFreeCabinets } from '../functions/avialable';
+import { getFreeBuiding, getFreeBuiding1, getFreeCabinets, getFreeCabinets1 } from '../functions/avialable';
 import { Building } from '../model/data';
 import { IRoomFilters, IRoomListResponse } from '../model/room';
 import { API_USER_ORDER } from '../settings';
@@ -70,6 +70,10 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
     setComment(e.currentTarget.value);
   }
 
+  const handleChangeBuilding = (e: React.FormEvent<HTMLInputElement>) => {
+    //setComment(e.currentTarget.value);
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -115,7 +119,8 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
   let places = getFreeBuiding1();
 
   // список свободных кабинетов
-  const cabinets = getFreeCabinets();
+  //оно должно выходить только после выбора здания
+  const cabinets = getFreeCabinets1();
 
   return (
     <div className={classes.main}>

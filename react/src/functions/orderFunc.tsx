@@ -76,7 +76,7 @@ const crUser = (
 let OrderListResponse: Array<IOrderListResponse>;
 
 // это будет запрос возвращать
-const Orders: IOrderListResponse = [
+let Orders: IOrderListResponse = [
     createData(123, new Date(), new Date(), 'ком 1', 1, 1, 0,
         crRoom(1, 'Здание1', '#100', 10, 1, 1, crStatus(1, 'статус', ''), new Date(), new Date(), new Date(), new Date()),
         crStatus(1, 'статус', ''),
@@ -105,32 +105,46 @@ const Orders: IOrderListResponse = [
      createData(333, new Date(), new Date(), 'ком 3', 2, true, true, 'Здание 4', '№541', 'Согласовано'),    */
 ]
 
-export function getOrders() {
-    return Orders
+let Orderss: IOrderListResponse;
+export function getOrders(filters: IOrderFilters) {
+    //const Orderss = getOrderList(filters);
+    getOrderList(filters).then(function(result) {
+        console.log('результат запроса заявок');
+        console.log(result);
+        Orderss = result; 
+    })
+    
+    return Orderss
 }
 
+
 // это запрос из бэка
-export async function getOrderList(filters: IOrderFilters) {
+async function getOrderList(filters: IOrderFilters) {
     let headersSet = new Headers();
     headersSet.append('Content-Type', 'application/json; charset=utf-8');
     addAuthHeader(headersSet);
     
     let OrderListRequest: IOrderListRequest;
-    OrderListRequest = { iPage: 1, iCountOnPage: 1, filters: filters };
+    OrderListRequest = { iPage: 0, iCountOnPage: 0, filters: filters };
 
     let responseOrders = await fetch(API_USER_ORDER + '/getList', {
         method: 'POST',
         headers: headersSet,
-        body: JSON.stringify(OrderListResponse)
+        body: JSON.stringify(OrderListRequest)
     });
+
+    console.log(responseOrders);
 
     if (responseOrders.status == 200) {
         console.log('Orders_OK');      
+        let resultOrders = await responseOrders.json() as IOrderListResponse;
+        Orders = resultOrders
     } else {
         console.log('Not_resp');
     }
     return (
-        OrderListResponse
+        //OrderListResponse
+        Orders
     )
 }
 

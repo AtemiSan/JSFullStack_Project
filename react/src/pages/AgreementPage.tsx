@@ -31,7 +31,7 @@ filters = {   // Для запросов от пользователя
   adminDeletedAdd: false
 };
 // получем списов заявок
-let rows = getOrders();   // заглушка
+let rows = getOrders(filters);   // заглушка
 //let rows2 = getOrderList(filters); // из бэка
 
 export function AgreementPage({ }: IAgreementPageProps) {
@@ -40,7 +40,7 @@ export function AgreementPage({ }: IAgreementPageProps) {
     alert('Заявка отправлена');
   }
 
-  if (rows) {
+  if (rows != null) {
     return (
       <>
         <div className={common.title}>
@@ -62,8 +62,28 @@ export function AgreementPage({ }: IAgreementPageProps) {
       </>
     )
   } else
-    return null;
+  return (
+    <div className={common.title}>
+      Заявок нет
+    </div>);
 }
+
+
+/*
+        {rows.map(item =>
+          <Order
+            idOrder={item.idOrder}
+            dtBegin={item.dtBegin} 
+            dtEnd={item.dtEnd} 
+            sComment={item.sComment}
+            iSeatingPlaces={item.iSeatingPlaces}
+            bHasProjector={item.bHasProjector}
+            bHasInternet={item.bHasInternet}
+            room={item.room} 
+            status={item.status}
+          />
+        )}  
+        */
 
 /*
           id={item.id}
