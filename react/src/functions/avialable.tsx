@@ -88,7 +88,7 @@ export async function getFreeBuiding(filters: IRoomFilters) {
     );
 
   } else {
-    console.log('Not_resp');
+    console.log('Not_resp_avialable');
   }
 
   return (

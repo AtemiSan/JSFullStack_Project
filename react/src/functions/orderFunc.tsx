@@ -119,7 +119,7 @@ export function getOrders(filters: IOrderFilters) {
 
 
 // это запрос из бэка
-async function getOrderList(filters: IOrderFilters) {
+export async function getOrderList(filters: IOrderFilters) {
     let headersSet = new Headers();
     headersSet.append('Content-Type', 'application/json; charset=utf-8');
     addAuthHeader(headersSet);
@@ -139,6 +139,7 @@ async function getOrderList(filters: IOrderFilters) {
         console.log('Orders_OK');      
         let resultOrders = await responseOrders.json() as IOrderListResponse;
         Orders = resultOrders
+        console.log(resultOrders)
     } else {
         console.log('Not_resp');
     }

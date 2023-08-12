@@ -1,12 +1,15 @@
 import classes from '../styles/profile.module.scss';
 import common from '../styles/common.module.scss';
 import { useState } from 'react';
+import { addAuthHeader } from '../functions/headers.func';
+import { API_USER_AUTH } from '../settings';
+import { IChangePasswRequest } from '../model/user';
 
 export interface IProfileChangePasswPageProps {
 
 }
 
-export function ProfileChangePasswPage({}: IProfileChangePasswPageProps) {
+export function ProfileChangePasswPage({ }: IProfileChangePasswPageProps) {
 
   const [oldPassw, setOldPassw] = useState('');
   const [newPassw, setNewPassw] = useState('');
@@ -40,6 +43,26 @@ export function ProfileChangePasswPage({}: IProfileChangePasswPageProps) {
     }
   }
 
+  async function save_password() {
+    let headersSet = new Headers();
+    headersSet.append('Content-Type', 'application/json; charset=utf-8');
+    addAuthHeader(headersSet);
+    let ChangePasswRequest: IChangePasswRequest;
+    ChangePasswRequest = { sOldPassw: oldPassw, sNewPassw: newPassw }
+    let responseChangePassw = await fetch(API_USER_AUTH + '/changePassw', {
+      method: 'POST',
+      headers: headersSet,
+      body: JSON.stringify(ChangePasswRequest)
+    });
+
+    if (responseChangePassw.status == 200) {
+      console.log('ChangePassw_OK');
+      alert('Пароль изменен! УРА')
+    } else {
+      console.log('ChangePassw_NO_ok');
+    }
+  }
+
   return (
     <div className={classes.main}>
       <div className={classes.card}>
@@ -59,7 +82,7 @@ export function ProfileChangePasswPage({}: IProfileChangePasswPageProps) {
             <input className={classes.input} type='password' placeholder='Повторите пароль' value={repeatPassw} onChange={handleChangeRepeatPassw} required />
           </label>
 
-          <input className={classes.btn} type='submit' name='submit' value='Сохранить' />
+          <input className={classes.btn} type='submit' name='submit' value='Сохранить' onClick={() => { save_password() }} />
         </form>
       </div>
     </div>

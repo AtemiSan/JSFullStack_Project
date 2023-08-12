@@ -1,4 +1,6 @@
-import { IDepartment, IDolgnost, IRole } from "../model/data";
+import { IDepartment, IDolgListResponse, IDolgnost, IRole } from "../model/data";
+import { API_PUBLIC_DATA } from "../settings";
+import { addAuthHeader } from "./headers.func";
 
 /* достаем значения справчоников */
 
@@ -26,16 +28,44 @@ const crDolgnost = (
     sDolg: string
 ): IDolgnost => ({ idDolg, sDolg })
 
-const Dolgnosts = [
+let Dolgnosts = [
     crDolgnost(0, 'Директор'),
     crDolgnost(1, 'Бухгалтер'),
     crDolgnost(2, 'Инженер'),
 ]
 
-export function getDolgnosts() {
+export async function getDolgnosts1() {
+    let headersSet = new Headers();
+    headersSet.append('Content-Type', 'application/json; charset=utf-8');
+    addAuthHeader(headersSet);
+    // RequestNoParams / IDolgListResponse
+    let DolgListResponse = await fetch(API_PUBLIC_DATA + '/getDolgList', {
+        method: 'POST',
+        headers: headersSet,
+        //body: JSON.stringify()
+    });
+
+    if (DolgListResponse.status == 200) {
+        let resultDolgListResponse = await DolgListResponse.json() as IDolgListResponse;
+        Dolgnosts = resultDolgListResponse;
+        console.log('dolg_ok')
+    } else {
+        console.log('dolg_NO_ok')
+    }
+
     return (
         Dolgnosts
     )
+}
+
+export function getDolgnosts() {
+    getDolgnosts1().then(function (result) {
+        console.log('результат запроса Должностей');
+        console.log(result);
+        Dolgnosts = result;
+    })
+
+    return Dolgnosts
 }
 
 // справочник Подразделений
