@@ -60,6 +60,7 @@ export interface IOrder {
   iSeatingPlaces: number
   bHasProjector: number
   bHasInternet: number
+  user: IUserResponse
   room: IRoomResponse
   status: IStatus
   userAgreement: IUserResponse

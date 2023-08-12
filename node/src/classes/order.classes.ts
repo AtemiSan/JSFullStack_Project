@@ -16,6 +16,7 @@ export class COrderResponse implements IOrderResponse {
   iSeatingPlaces: number;
   bHasProjector: number;
   bHasInternet: number;
+  user: IUserResponse;
   room: IRoomResponse;
   status: IStatus;
   userAgreement: IUserResponse;
@@ -31,6 +32,7 @@ export class COrderResponse implements IOrderResponse {
     this.iSeatingPlaces = order?.iSeatingPlaces;
     this.bHasProjector = order?.bHasProjector;
     this.bHasInternet = order?.bHasInternet;
+    this.user = new CUserResponse(order?.user);
     this.room = new CRoomResponse(order?.room);
     this.status = new CStatus(order?.status);
     this.userAgreement = new CUserResponse(order?.userAgreement);
