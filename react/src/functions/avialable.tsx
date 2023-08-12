@@ -11,19 +11,38 @@ const createDataB = (
 //>> заглушка
 const Buildings1 = [
   createDataB(1, 'Здание 1'),
-  createDataB(2, 'Здание 2'),
-  createDataB(3, 'Здание 3'),
-  createDataB(4, 'Здание 4'),
+  createDataB(1, 'Здание 2'),
+  createDataB(1, 'Здание 3'),
+  createDataB(1, 'Здание 1'),
+  createDataB(1, 'Здание 4'),
 ]
 
+let Buildings2: Array<Building>;
+
 export function getFreeBuiding1() {
+  Buildings2 = [Buildings1[0]]
+  let find: boolean;
+  Buildings1.forEach((element) => {
+    Buildings2.forEach((elementUniq) => {
+      if (elementUniq.Building === element.Building) {
+        find = true;
+      }
+    }
+    )
+    if (find === false) {
+      Buildings2.push(element)
+    }
+    find = false;
+  }
+  );  
   return (
-    Buildings1
+    Buildings2
   )
 }
 //<< заглушка
 
 // для реального запроса
+let allBuildings: Array<Building>;
 let Buildings: Array<Building>;
 let freeRooms: IRoomListRequest;
 
@@ -34,10 +53,10 @@ let freeRooms: IRoomListRequest;
    deletedAdd: boolean     // true - вернуть все (удалённые и не удалённые), отменяет условие по умолчанию bDel == false 
  }*/
 
- // реальный запрос свободных Зданий
+// реальный запрос свободных Зданий
 export async function getFreeBuiding(filters: IRoomFilters) {
 
-  freeRooms = { iPage: 0, iCountOnPage: 0 , filters: filters }; 
+  freeRooms = { iPage: 0, iCountOnPage: 0, filters: filters };
 
   let headersSet = new Headers();
   headersSet.append('Content-Type', 'application/json; charset=utf-8');
@@ -49,9 +68,25 @@ export async function getFreeBuiding(filters: IRoomFilters) {
   });
 
   if (responseBuilding.status == 200) {
-     // Добавить удаление повторяющихся
-     let resultBuildings = await responseBuilding.json() as IRoomListResponse;
-     Buildings = resultBuildings.map(item => createDataB(1, item.sAddress))
+    let resultBuildings = await responseBuilding.json() as IRoomListResponse;
+    allBuildings = resultBuildings.map(item => createDataB(1, item.sAddress))
+    // удаляем повторяющиеся
+    Buildings = [allBuildings[0]]
+    let find: boolean;
+    allBuildings.forEach((element) => {
+      Buildings.forEach((elementUniq) => {
+        if (elementUniq.Building === element.Building) {
+          find = true;
+        }
+      }
+      )
+      if (find === false) {
+        Buildings.push(element)
+      }
+      find = false;
+    }
+    );
+
   } else {
     console.log('Not_resp');
   }
@@ -64,17 +99,28 @@ export async function getFreeBuiding(filters: IRoomFilters) {
 // Совободные кабинеты
 const createDataC = (
   id: number,
-  Cabinet: string): Cabinet => ({ id, Cabinet })
+  Cabinet: number): Cabinet => ({ id, Cabinet })
 
 const Cabinets = [
-  createDataC(1, '№100'),
-  createDataC(2, '№200'),
-  createDataC(3, '№500'),
-  createDataC(4, '№413'),
+  createDataC(1, 100),
+  createDataC(2, 200),
+  createDataC(3, 500),
+  createDataC(4, 400),
 ]
+let allCabinets: Array<Cabinet>;
 
+// заглушка
+export function getFreeCabinets1() {
+  console.log(allBuildings)
+// тут нам еще доступны значения allBuildings
+//Cabinets = resultBuildings.map(item => createDataB(1, item.sAddress))
+  return (
+    Cabinets
+  )
+}  
+
+// реальный запрос свободных Кабинетов
 export function getFreeCabinets() {
-
   return (
     Cabinets
   )

@@ -10,3 +10,5 @@ export const API_ADMIN_ROOM = BACKEND_HOST + '/api/admin/room';
 export const API_USER_ORDER = BACKEND_HOST + '/api/user/order';
 
 export const API_USER_ROOM = BACKEND_HOST + '/api/user/room/';
+
+export const API_ADMIN_USER = BACKEND_HOST + '/api/admin/user';

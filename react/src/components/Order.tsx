@@ -2,8 +2,9 @@ import classes from '../styles/order.module.scss';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { IRole, IRoom, IStatus, Statuses, UserRoles } from '../model/data';
-import { IOrderResponse } from '../model/order';
+import { IOrderChangeStatusRequest, IOrderDeleteRequest, IOrderListRequest, IOrderResponse } from '../model/order';
 import { API_USER_ORDER } from '../settings';
+import { addAuthHeader } from '../functions/headers.func';
 
 // для списка кнопок
 export interface ButtonOrder {
@@ -40,32 +41,57 @@ export function Order(props: IOrderProps) {
   const [showForm, setShowForm] = useState(false)
   const openForm = () => setShowForm(true)
 
+  let headersSet = new Headers();
+  headersSet.append('Content-Type', 'application/json; charset=utf-8');
+  addAuthHeader(headersSet);
+
   const handleClick = async (event: React.MouseEvent<unknown>, id: IOrderResponse["idOrder"], btn_id: string) => {
+    // согласовать
     if (btn_id == 'approve') { 
-      /*let responseBuilding = await fetch(API_ADMIN_ROOM + '/exec', {
+      let OrderChangeStatusRequest: IOrderChangeStatusRequest;
+      OrderChangeStatusRequest = { idOrder: props.idOrder, idStatus: 11 };     
+      let responseChangeStatusRequest = await fetch(API_USER_ORDER + '/changeStatus', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8'
-        },
-        body: JSON.stringify(freeRooms)
+        headers: headersSet,
+        body: JSON.stringify(OrderChangeStatusRequest)
       }); 
-      if (responseBuilding.status == 200) {
-         // Добавить удаление повторяющихся
-         Buildings = freeRooms.map(item => createDataB(1, item.sAddress))
+      if (responseChangeStatusRequest.status == 200) {
+         alert('Заявка согласована!'); 
+         // чтобы кнопки пропали 
+         props.status.idStatus = Statuses.AGREED;
       } else {
-        console.log('Not_resp');
-      }      */
-      alert('Заявка согласована!'); 
+        console.log('Bad_resp');
+      }   
+      
     }
+
+    //отклонить
     else if (btn_id == 'reject') { 
-      alert('Заявка отклонена!'); 
+      let OrderChangeStatusRequest: IOrderChangeStatusRequest;
+      OrderChangeStatusRequest = { idOrder: props.idOrder, idStatus: 12 };     
+      let responseChangeStatusRequest = await fetch(API_USER_ORDER + '/changeStatus', {
+        method: 'POST',
+        headers: headersSet,
+        body: JSON.stringify(OrderChangeStatusRequest)
+      }); 
+      if (responseChangeStatusRequest.status == 200) {
+        alert('Заявка отклонена!'); 
+         // чтобы кнопки пропали 
+         props.status.idStatus = Statuses.REJECTED;
+      } else {
+        console.log('Bad_resp');
+      }       
+      
     }
+
+    //Удалить
     else if (btn_id == 'cancel') {
+      let OrderDeleteRequest: IOrderDeleteRequest;
+      OrderDeleteRequest = { idOrder: props.idOrder };     
       let responseDeleteOrder = await fetch(API_USER_ORDER + '/exec', {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8'
-        },
+        headers: headersSet,
+        body: JSON.stringify(OrderDeleteRequest)
       }); 
       if (responseDeleteOrder.status == 200) {
          // Удалилось

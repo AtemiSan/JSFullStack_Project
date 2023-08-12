@@ -7,7 +7,7 @@ export interface Building {
 
 export interface Cabinet {
   id: number
-  Cabinet: string
+  Cabinet: number
 }
 // Роли
 //export type IRole = 'user' | 'admin' | 'manager' 

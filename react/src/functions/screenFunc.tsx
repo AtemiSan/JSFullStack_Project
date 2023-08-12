@@ -12,7 +12,7 @@ const ButtonsMenu = [
     createData('create_order', 'create_order', 'Подать заявку'),
     createData('registration', 'registration', 'Регистрация'),
     createData('agreement', 'agreement', 'Согласование'),
-    createData('references', 'references', 'Справочники')
+    //createData('references', 'references', 'Справочники')
 ]
 
 
