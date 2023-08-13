@@ -2,7 +2,8 @@ import { randomInt } from 'crypto';
 import { Order } from '../components/Order';
 import common from '../styles/common.module.scss';
 import { getOrders } from '../functions/orderFunc';
-import { IOrderFilters } from '../model/order';
+import { IOrderFilters, IOrderListResponse } from '../model/order';
+import { useEffect } from 'react';
 
 export interface IAgreementPageProps {
 
@@ -30,15 +31,30 @@ filters = {   // Для запросов от пользователя
   adminDeletedOnly: false,
   adminDeletedAdd: false
 };
+let rows: IOrderListResponse;
+
 // получем списов заявок
-let rows = getOrders(filters);   // заглушка
+//let rows = getOrders(filters);   // заглушка
 //let rows2 = getOrderList(filters); // из бэка
 
 export function AgreementPage({ }: IAgreementPageProps) {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    alert('Заявка отправлена');
+
+  const userStorage = localStorage.getItem('orders');
+  console.log('userStorage')
+  console.log(userStorage)
+  if (userStorage != null) {
+    rows = JSON.parse(userStorage);
   }
+
+  useEffect(() => {
+    // Обновляем
+    const userStorage = localStorage.getItem('orders');
+    console.log('userStorage')
+    console.log(userStorage)
+    if (userStorage != null) {
+      rows = JSON.parse(userStorage);
+    }
+  });
 
   if (rows != null) {
     return (

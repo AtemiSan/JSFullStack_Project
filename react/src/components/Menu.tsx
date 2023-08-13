@@ -58,8 +58,9 @@ export function Menu({ }: IMenuProps) {
   };
 
 
-  async function getOrders(navig: string) {
+  async function getOrdersMenu(navig: string) {
     const orders = await getOrderList(filters);
+    console.log(orders);
     navigate(navig)
   }
 
@@ -74,7 +75,7 @@ export function Menu({ }: IMenuProps) {
             className={((UserResponse.role.idRole == UserRoles.USER && (item.id == 'registration' || item.id == 'agreement')) ||
               (UserResponse.role.idRole == UserRoles.MANAGER && (item.id == 'lk' || item.id == 'create_order' || item.id == 'registration'))
             ) ? classes.nodisplay : classes.btn}
-            onClick={() => { (item.id == 'lk' || item.id == 'agreement') ? getOrders(item.navigate) : navigate(item.navigate) }}>{item.text}</div>
+            onClick={() => { (item.id == 'lk' || item.id == 'agreement') ? getOrdersMenu(item.navigate) : navigate(item.navigate) }}>{item.text}</div>
         )}
       </div>
     </>
