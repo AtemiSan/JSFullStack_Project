@@ -1,11 +1,14 @@
 import classes from '../styles/order.module.scss';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IRole, IRoom, IStatus, Statuses, UserRoles } from '../model/data';
 import { IOrderChangeStatusRequest, IOrderDeleteRequest, IOrderListRequest, IOrderResponse } from '../model/order';
 import { API_USER_ORDER } from '../settings';
 import { addAuthHeader } from '../functions/headers.func';
 import { IUserResponse } from '../model/user';
+import { getOrderList } from '../functions/orderFunc';
+import { IOrderFilters } from '../model/order';
+import { AgreementPage } from '../pages/AgreementPage';
 
 // для списка кнопок
 export interface ButtonOrder {
@@ -42,13 +45,43 @@ if (userStorage != null) {
   UserResponse = JSON.parse(userStorage);
 }
 
+let filters: IOrderFilters;
 
 export function Order(props: IOrderProps) {
+  let status: string;
 
   const navigate = useNavigate();
   const edit = () => navigate('order')
   const [showForm, setShowForm] = useState(false)
   const openForm = () => setShowForm(true)
+
+  filters = {   // Для запросов от пользователя
+    userActive: (UserResponse.role.idRole == UserRoles.USER) ? true : false,       // true - вернуть активные (status = на согласовании и согласованные + время окончания аренды ещё не истекло)
+    userRejected: false,     // true - вернуть отклонённые (status = отклонённые, отменённые + просроченные)
+    userNotDeleted: false,   // true - вернуть все, кроме удалённых
+    userDeletedOnly: false,  // true - вернуть все удалённые
+    userDeletedAdd: false,		// true - вернуть все (удалённые и не удалённые)
+    // Для запросов от согласующего
+    agreeActive: (UserResponse.role.idRole == UserRoles.MANAGER) ? true : false,           // true - вернуть активные для согласования (status = на согласовании и не просроченные)
+    agreeRejected: false,         // true - вернуть отклонённые (status = отклонённые этим согласующим)
+    agreeAgreemented: false,		   // true - вернуть все согласованные (status = согласованные этим согласующим)
+    agreeNotDeleted: false,
+    agreeDeletedOnly: false,
+    agreeDeletedAdd: false,
+    // Для запросов от администратора
+    adminActive: (UserResponse.role.idRole == UserRoles.MANAGER) ? true : false,          // true - вернуть активные для согласования (status = на согласовании и не просроченные)
+    adminRejected: false,        // true - вернуть отклонённые (status = отклонённые)
+    adminAgreemented: false,     // true - вернуть все согласованные (status = согласованные)
+    adminNotDeleted: false,
+    adminDeletedOnly: false,
+    adminDeletedAdd: false
+  };
+
+  async function getOrdersAgr(navig: string) {
+    const orders = await getOrderList(filters);
+    console.log(orders);
+    navigate(navig)
+  }
 
   let headersSet = new Headers();
   headersSet.append('Content-Type', 'application/json; charset=utf-8');
@@ -67,11 +100,10 @@ export function Order(props: IOrderProps) {
       if (responseChangeStatusRequest.status == 200) {
         alert('Заявка согласована!');
         // чтобы кнопки пропали 
-        props.status.idStatus = Statuses.AGREED;
+        status = 'approve';      
       } else {
-        console.log('Bad_resp');
+        console.log('Согласование не удалось! ошибка отправки запроса');
       }
-
     }
 
     //отклонить
@@ -86,7 +118,8 @@ export function Order(props: IOrderProps) {
       if (responseChangeStatusRequest.status == 200) {
         alert('Заявка отклонена!');
         // чтобы кнопки пропали 
-        props.status.idStatus = Statuses.REJECTED;
+        props.status.idStatus = Statuses.REJECTED;  
+        status = 'reject'  
       } else {
         console.log('Bad_resp');
       }
@@ -107,8 +140,7 @@ export function Order(props: IOrderProps) {
       if (responseDeleteOrder.status == 200) {
         // Удалилось
         alert('Заявка отменена!');
-        // чтобы кнопки пропали 
-        props.status.idStatus = Statuses.CANCELED_BY_USER;
+        status = 'cancel';     
       } else {
         alert('Удалени Заявка не получилось!');
       }
@@ -124,6 +156,21 @@ export function Order(props: IOrderProps) {
     //return day + '.' + month + '.' + dt.getFullYear() + '  ' + dt.getHours() + ':' + dt.getMinutes();
   }
 
+  useEffect(() => {
+    // Обновляем
+    if (status == 'approve') {
+      props.status.idStatus = Statuses.AGREED;
+      props.status.sStatus = 'Согласовано';
+    }
+    else if (status == 'reject') {
+      props.status.idStatus = Statuses.REJECTED;
+      props.status.sStatus = 'Отклонено';
+    }
+    else if (status == 'cancel') {
+      props.status.idStatus = Statuses.CANCELED_BY_USER;
+      props.status.sStatus = 'Отменено';}
+      else { }
+  });
 
   return (
     <div className={classes.card}>
@@ -150,6 +197,10 @@ export function Order(props: IOrderProps) {
   )
 }
 
+
+function getOrdersMenu(arg0: string) {
+  throw new Error('Function not implemented.');
+}
 //      <div className={classes.item}>Время аренды: {getFormatedDate(props.dtBegin)} - {getFormatedDate(props.dtEnd)}</div>
 /*
       <div className={classes.item}>Здание :             {props.sAdress}</div>  ????
