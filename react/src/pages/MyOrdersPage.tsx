@@ -1,9 +1,12 @@
 import { randomInt } from 'crypto';
 import { Order } from '../components/Order';
 import common from '../styles/common.module.scss';
-import { getOrders } from '../functions/orderFunc';
-import { IOrderFilters, IOrderListResponse, IOrderResponse } from '../model/order';
+import { getOrderList, getOrders } from '../functions/orderFunc';
+import { IOrderFilters, IOrderListRequest, IOrderListResponse, IOrderResponse } from '../model/order';
 import { IRole, IRoom, IStatus, IUser } from '../model/data';
+import React, { useEffect } from 'react';
+import { addAuthHeader } from '../functions/headers.func';
+import { API_USER_ORDER } from '../settings';
 
 export interface IMyOrdersPageProps {
 
@@ -48,21 +51,28 @@ filters = {   // Для запросов от пользователя
   adminDeletedAdd: false
 };
 // получем списов заявок
-let rows = getOrders(filters);   // заглушка
+let rows: IOrderListResponse = [];
+//let rows = getOrders(filters);   // заглушка
 //const oderList = getOrderList(filters); // из бэка
 //let rows: Array<IOrderListResponse>;
 //rows = oderList.map(item => createDataB(1, item.sAddress))
+
 
 export function MyOrdersPage({ }: IMyOrdersPageProps) {
 
   //rows = (await oderList).map(item => createData(item.idOrder))
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  /*const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     alert('Заявка отправлена');
-  }
+  }*/
 
-  if (rows != null) {
+  useEffect(() => {
+    //rows = getOrderList(filters);
+    rows = getOrders(filters);
+  }, [])
+
+ // if (rows != null) {
     return (
       <>
         <div className={common.title}>
@@ -83,9 +93,9 @@ export function MyOrdersPage({ }: IMyOrdersPageProps) {
         )}
       </>
     )
-  } else
+ /* } else
     return (
       <div className={common.title}>
         Заявок нет
-      </div>);
+      </div>);*/
 }

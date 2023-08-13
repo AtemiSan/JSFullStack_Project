@@ -75,7 +75,7 @@ export async function getFreeBuiding(filters: IRoomFilters) {
     let find: boolean;
     allBuildings.forEach((element) => {
       Buildings.forEach((elementUniq) => {
-        if (elementUniq.Building === element.Building) {
+        if (elementUniq.id === element.id) {
           find = true;
         }
       }

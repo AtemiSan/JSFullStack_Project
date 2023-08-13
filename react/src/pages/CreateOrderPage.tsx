@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import common from '../styles/common.module.scss';
 import classes from '../styles/profile.module.scss';
 import { getFreeBuiding, getFreeBuiding1, getFreeCabinets, getFreeCabinets1 } from '../functions/avialable';
@@ -13,11 +13,14 @@ export interface ICreateOrderPageProps {
 
 }
 
+let places: Array<Building>;
 export function CreateOrderPage({ }: ICreateOrderPageProps) {
   // список свободных зданий
   //let buildings: IRoomListResponse;
   let roomFilters: IRoomFilters
   //let places: Array<Building>;
+  let idRoom: number;
+  places = [];
 
   const navigate = useNavigate();
 
@@ -28,6 +31,7 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
   const [fHasInternet, setHasInternet] = useState(false);
   const [fComment, setComment] = useState('');
   const [selectedBuilding, setSelectedBuilding] = useState('');
+  const [selectedRoom, setSelectedRoom] = useState('');
 
   const handleChangeDtBegin = async (e: React.FormEvent<HTMLInputElement>) => {
     setDtBegin(e.currentTarget.value);
@@ -75,6 +79,10 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
     //setComment(e.currentTarget.value);
   }
 
+  const handleChangeRoom = (e: React.FormEvent<HTMLInputElement>) => {
+    setSelectedRoom(e.currentTarget.value);
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -87,6 +95,19 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
     } else if (new Date(fDtEnd) < new Date(fDtBegin)) {
       alert('Время начала не может быть меньше времени окончания.')
     } else {
+
+      // найдем ID кабинета
+      idRoom = 0;
+      if (selectedRoom != '') {
+        {
+          cabinets.forEach(element => {
+            if (element.id.toString() === selectedRoom) {
+              idRoom = element.id;
+            }
+          });
+        }
+      }
+
       let RegisterOrderRequest: IRegisterOrderRequest = {
         dtBegin: new Date(fDtBegin),
         dtEnd: new Date(fDtEnd),
@@ -94,8 +115,8 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
         iSeatingPlaces: fSeatingPlaces,
         bHasProjector: fHasProjector,
         bHasInternet: fHasInternet,
-        idRoom: 0
-      };   // номер комнаты передать ??
+        idRoom: idRoom
+      };
 
       // добавление заявки IRegisterOrderRequest / Response 200
       let headersSet = new Headers();
@@ -116,8 +137,16 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
     }
   }
 
+  async function getRooms() {
+    places = await getFreeBuiding(roomFilters);
+  }
+
+  useEffect(() => {
+    getRooms();
+  }, [])
+
   // список свободных зданий
-  let places = getFreeBuiding1();
+ // let places = getFreeBuiding1();
 
   // список свободных кабинетов
   //оно должно выходить только после выбора здания
@@ -148,16 +177,17 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
             <input className={classes.checkbox} type='checkbox' checked={fHasInternet} onChange={handleChangeHasInternet} />
             Наличие интернета
           </label>
+          <input className={classes.btn} type='submit' name='Rooms' value='Получить свободные кабинеты' onClick={() => { getRooms() }} />
           <label>
             Здание
-            <select className={classes.input} required onChange={(e) => setSelectedBuilding(e.target.value)}>
+            <select className={classes.input} onChange={(e) => setSelectedBuilding(e.target.value)}>
               <option selected disabled></option>
               {places.map(item => <option value={item.id}> {item.Building} </option>)}
             </select>
           </label>
           <label>
             Кабинет
-            <select className={classes.input} required >
+            <select className={classes.input} onChange={(e) => setSelectedRoom(e.target.value)}>
               <option selected disabled></option>
               {cabinets.map(item => <option value={item.id}> {item.Cabinet} </option>)}
             </select>
@@ -172,3 +202,5 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
     </div>
   )
 }
+// onChange={(e) => setSelectedRoom(e.target.value)}
+//handleChangeRoom

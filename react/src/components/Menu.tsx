@@ -23,7 +23,6 @@ export function Menu({ }: IMenuProps) {
     UserResponse = JSON.parse(userStorage);
   }
 
-
   //role = {idRole: 0, sRole: 'admin'}
   //role = {idRole: 1, sRole: 'manager'}
   //role = { idRole: 2, sRole: 'user' }

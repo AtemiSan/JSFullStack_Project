@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { getButtonsMenu } from '../functions/screenFunc';
 import { IRole, UserRoles } from '../model/data';
 import { IUserResponse } from '../model/user';
+import { IButtonMenu } from '../model/screen';
 
 export interface IAppBarProps {
 
@@ -14,14 +15,8 @@ export interface IAppBarProps {
 
 // список кнопок меню
 const ButtonsMenu = getButtonsMenu();
+let ButtonMenuFilter: Array<IButtonMenu>;
 
-  // забираем настоящую роль
-  let UserResponse: IUserResponse;
-  const userStorage = localStorage.getItem('user');
-  if (userStorage != null) {
-    UserResponse = JSON.parse(userStorage);
-  }
-  
 export function AppBar({ }: IAppBarProps) {
 
   const [userName, setUserName] = useState('');
@@ -30,6 +25,32 @@ export function AppBar({ }: IAppBarProps) {
     let user: string = localStorage.getItem('userName') ? String(localStorage.getItem('userName')) : 'Вы не авторизованы';
     setUserName(user);
   }, []);
+
+  // забираем настоящую роль
+  let UserResponse: IUserResponse;
+  const userStorage = localStorage.getItem('user');
+  if (userStorage != null) {
+    UserResponse = JSON.parse(userStorage);
+  }
+
+  // фильтруем кнопки меню которые нам подходят, не знаю почему ниже условия не срабатывают
+  ButtonMenuFilter = [];
+  ButtonsMenu.forEach((element) => {
+    if  ((UserResponse.role.idRole == UserRoles.USER && (element.id == 'lk' || element.id == 'create_order' || element.id == 'profile' )) ||
+         (UserResponse.role.idRole == UserRoles.MANAGER && (element.id == 'agreement' || element.id == 'profile' )) ||
+         UserResponse.role.idRole == UserRoles.ADMIN) {
+    let find = false;
+    if (ButtonMenuFilter != undefined) {
+    ButtonMenuFilter.forEach((elementFilt) => {
+      if (elementFilt.id === element.id) {
+        find = true
+      }
+    }) }
+    if (find == false) {
+      ButtonMenuFilter.push(element)
+    }
+  }
+})
 
   const navigate = useNavigate();
   /*let role: IRole = {
@@ -62,10 +83,11 @@ export function AppBar({ }: IAppBarProps) {
         <div className={classes.dropdown}>
           <button className={classes.dropbtn}><img src={menu}></img></button>
           <div className={classes.dropdown_content}>
-            {ButtonsMenu.map(item =>
+            {ButtonMenuFilter.map(item =>
               <a><div
                 className={((UserResponse.role.idRole == UserRoles.USER && (item.id == 'registration' || item.id == 'agreement')) ||
-                            (UserResponse.role.idRole == UserRoles.MANAGER && (item.id == 'lk' || item.id == 'create_order' || item.id == 'registration')) ) ? classes.nodisplay : classes.btn}
+                  (UserResponse.role.idRole == UserRoles.MANAGER && (item.id == 'lk' || item.id == 'create_order' || item.id == 'registration'))
+                ) ? classes.nodisplay : classes.btn}
                 onClick={() => { navigate(item.navigate) }}>{item.text}</div></a>
             )}
           </div>
