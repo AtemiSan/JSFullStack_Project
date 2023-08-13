@@ -6,6 +6,7 @@ import { getDepartments, getDolgnosts, getDolgnosts1 } from '../functions/refere
 import { IUserResponse, IUserUpdateRequest } from '../model/user';
 import { API_ADMIN_USER } from '../settings';
 import { addAuthHeader } from '../functions/headers.func';
+import { checkUserLoggedIn } from '../functions/user.func';
 
 export interface IProfilePageProps {
 
@@ -21,6 +22,8 @@ if (userStorage != null) {
 export function ProfilePage({ }: IProfilePageProps) {
 
   const navigate = useNavigate();
+  if (!checkUserLoggedIn()) 
+    navigate('/');
 
   const [userFam, setUserFam] = useState(UserResponse.sFam);
   const [userName, setUserName] = useState(UserResponse.sName);

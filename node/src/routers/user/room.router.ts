@@ -8,5 +8,6 @@ const router = Router();
 router.use(passport.authenticate("jwt", { session: false }), UserMiddleware);
 
 router.post('/getList', roomController.getList);
+router.post('/getFreeList', roomController.getFreeList);
 
 export default router;

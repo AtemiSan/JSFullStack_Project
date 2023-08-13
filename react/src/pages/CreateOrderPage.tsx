@@ -1,39 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import common from '../styles/common.module.scss';
 import classes from '../styles/profile.module.scss';
-import { getFreeBuiding, getFreeBuiding1, getFreeCabinets, getFreeCabinets1 } from '../functions/avialable';
-import { Building, UserRoles } from '../model/data';
-import { IRoomFilters, IRoomListResponse } from '../model/room';
+import { UserRoles } from '../model/data';
+import { IRoomFreeListRequest, IRoomListResponse } from '../model/room';
 import { API_USER_ORDER } from '../settings';
 import { addAuthHeader } from '../functions/headers.func';
-import { IOrderFilters, IRegisterOrderRequest } from '../model/order';
+import { IRegisterOrderRequest } from '../model/order';
 import { useNavigate } from 'react-router-dom';
 import { IUserResponse } from '../model/user';
 import { getOrderList } from '../functions/orderFunc';
+import { getFreeRoomsQuery } from '../functions/room.func';
 
 export interface ICreateOrderPageProps {
 
 }
 
-let places: Array<Building>;
-let placesNew: Array<Building> = [];
-let filters: IOrderFilters;
 // забираем настоящую роль
 let UserResponse: IUserResponse;
 const userStorage = localStorage.getItem('user');
-if (userStorage != null) {
+if (userStorage !== null) {
   UserResponse = JSON.parse(userStorage);
 }
 
 export function CreateOrderPage({ }: ICreateOrderPageProps) {
-  // список свободных зданий
-  //let buildings: IRoomListResponse;
-  let roomFilters: IRoomFilters
-  //let places: Array<Building>;
-  let idRoom: number;
-  places = [];
 
-
+  const roomsSelect = document.querySelector('#rooms');
 
   const navigate = useNavigate();
 
@@ -43,29 +34,28 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
   const [fHasProjector, setHasProjector] = useState(false);
   const [fHasInternet, setHasInternet] = useState(false);
   const [fComment, setComment] = useState('');
-  const [selectedBuilding, setSelectedBuilding] = useState('');
-  const [selectedRoom, setSelectedRoom] = useState('');
+  const [fSelectedRoom, setSelectedRoom] = useState('');
+
+  const clearSelectRooms = () => {
+    if (roomsSelect !== null)
+      roomsSelect.innerHTML = '<option selected disabled>';
+    setSelectedRoom('');
+  }
+
+  const loadSelectRooms = (roomsList: IRoomListResponse) => {
+    if (roomsSelect !== null)
+      roomsSelect.innerHTML = `<option selected disabled></option>${roomsList.map(item => '<option value=' + item.idRoom + '>' + item.sAddress + ', ' + item.sCabinet + '</option>')}`;
+    setSelectedRoom('');
+  }
 
   const handleChangeDtBegin = async (e: React.FormEvent<HTMLInputElement>) => {
     setDtBegin(e.currentTarget.value);
-    // заполняем фильтр
-    let roomFilters: IRoomFilters;
-    if (fDtBegin !== '' && fDtEnd !== '') {
-      roomFilters = { dtBegin: new Date(fDtBegin), dtEnd: new Date(fDtEnd), adminNotDeleted: false, adminDeletedOnly: false, adminDeletedAdd: false };
-      // кидаем запрос
-      places = await getFreeBuiding(roomFilters);
-    }
+    clearSelectRooms();
   }
 
   const handleChangefDtEnd = async (e: React.FormEvent<HTMLInputElement>) => {
     setDtEnd(e.currentTarget.value);
-    // заполняем фильтр
-    let roomFilters: IRoomFilters;
-    if (fDtBegin !== '' && fDtEnd !== '') {
-      roomFilters = { dtBegin: new Date(fDtBegin), dtEnd: new Date(fDtEnd), adminNotDeleted: false, adminDeletedOnly: false, adminDeletedAdd: false };
-      // кидаем запрос
-      places = await getFreeBuiding(roomFilters);
-    }
+    clearSelectRooms();
   }
 
   const handleChangeSeatingPlaces = (e: React.FormEvent<HTMLInputElement>) => {
@@ -73,77 +63,79 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
       alert('Введите положительное число человек!')
     } else {
       setSeatingPlaces(e.currentTarget.valueAsNumber)
+      clearSelectRooms();
     };
   }
 
   const handleChangeHasProjector = (e: React.FormEvent<HTMLInputElement>) => {
     setHasProjector(!fHasProjector);
+    clearSelectRooms();
   }
 
   const handleChangeHasInternet = (e: React.FormEvent<HTMLInputElement>) => {
     setHasInternet(!fHasInternet);
+    clearSelectRooms();
   }
 
   const handleChangeComment = (e: React.FormEvent<HTMLInputElement>) => {
     setComment(e.currentTarget.value);
   }
 
-  const handleChangeBuilding = (e: React.FormEvent<HTMLInputElement>) => {
-    //setComment(e.currentTarget.value);
+  const handleChangeRoom = (e: React.FormEvent<HTMLSelectElement>) => {
+    setSelectedRoom(e.currentTarget.value);
   }
 
-  const handleChangeRoom = (e: React.FormEvent<HTMLInputElement>) => {
-    setSelectedRoom(e.currentTarget.value);
+  const checkFiedsGetRooms = () => {
+    if (fDtBegin === '') {
+      alert('Необходимо указать Время начала.');
+      return false;
+    } else if (fDtEnd === '') {
+      alert('Необходимо указать Время окончания.');
+      return false;
+    } else if (fDtBegin === fDtEnd) {
+      alert('Время начала и окончания должны отличаться.')
+      return false;
+    } else if (new Date(fDtEnd) < new Date(fDtBegin)) {
+      alert('Время начала не может быть меньше времени окончания.')
+      return false;
+    } else if (fSeatingPlaces <= 0) {
+      alert('Введите положительное число человек!');
+      return false;
+    }
+    return true;
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (fDtBegin === '') {
-      alert('Необходимо указать Время начала.');
-    } else if (fDtEnd === '') {
-      alert('Необходимо указать Время окончания.');
-    } else if (fDtBegin === fDtEnd) {
-      alert('Время начала и окончания должны отличаться.')
-    } else if (new Date(fDtEnd) < new Date(fDtBegin)) {
-      alert('Время начала не может быть меньше времени окончания.')
-    } else {
-    }
   }
 
-  async function getRooms() {
-    if (fDtBegin != '' && fDtEnd != '') {
-      roomFilters = { dtBegin: new Date(fDtBegin), dtEnd: new Date(fDtEnd), adminNotDeleted: false, adminDeletedOnly: false, adminDeletedAdd: false };
-      placesNew = await getFreeBuiding(roomFilters);
-      places = placesNew;
-      return placesNew
+  // Загрузка списка свободных переговорных
+  async function getFreeRooms() {
+    if (checkFiedsGetRooms()) {
+      const roomFreeListRequest: IRoomFreeListRequest = { 
+        dtBegin: new Date(fDtBegin), 
+        dtEnd: new Date(fDtEnd), 
+        iSeatingPlaces: fSeatingPlaces,
+        bHasProjector: fHasProjector ? 1 : 0,
+        bHasInternet: fHasInternet ? 1 : 0
+      };
+      const freeRooms: IRoomListResponse = await getFreeRoomsQuery(roomFreeListRequest);
+      loadSelectRooms(freeRooms);
     }
   }
-
 
   // сохранить/отправить Заявку
   async function sendOrder() {
-    // найдем ID кабинета
-    idRoom = 0;
-    if (selectedRoom != '') {
-      {
-        cabinets.forEach(element => {
-          if (element.id.toString() === selectedRoom) {
-            idRoom = element.id;
-          }
-        });
-      }
-    }
-    idRoom = 7;
-
-    let RegisterOrderRequest: IRegisterOrderRequest = {
+    if (!checkFiedsGetRooms() || fSelectedRoom == '') 
+      return;
+    let req: IRegisterOrderRequest = {
       dtBegin: new Date(fDtBegin),
       dtEnd: new Date(fDtEnd),
       sComment: fComment,
       iSeatingPlaces: fSeatingPlaces,
-      bHasProjector: (fHasProjector == true) ? 1 : 0,
-      bHasInternet: (fHasInternet == true) ? 1 : 0,
-      idRoom: idRoom
+      bHasProjector: fHasProjector ? 1 : 0,
+      bHasInternet: fHasInternet ? 1 : 0,
+      idRoom: +fSelectedRoom
     };
 
     // добавление заявки IRegisterOrderRequest / Response 200
@@ -153,7 +145,7 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
     let responsePostOrder = await fetch(API_USER_ORDER + '/exec', {
       method: 'POST',
       headers: headersSet,
-      body: JSON.stringify(RegisterOrderRequest)
+      body: JSON.stringify(req)
     });
     if (responsePostOrder.status == 201) {
       alert('Заявка отправлена');
@@ -165,12 +157,7 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
     }
   }
 
-  useEffect(() => {
-    getRooms();
-    places = placesNew
-  }, [])
-
-  filters = {   // Для запросов от пользователя
+  const filters = {   // Для запросов от пользователя
     userActive: (UserResponse.role.idRole == UserRoles.USER) ? true : false,       // true - вернуть активные (status = на согласовании и согласованные + время окончания аренды ещё не истекло)
     userRejected: false,     // true - вернуть отклонённые (status = отклонённые, отменённые + просроченные)
     userNotDeleted: false,   // true - вернуть все, кроме удалённых
@@ -191,17 +178,11 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
     adminDeletedOnly: false,
     adminDeletedAdd: false
   };
+
   async function getOrdersMenu(navig: string) {
     const orders = await getOrderList(filters);
-    console.log(orders);
     //navigate(navig)
   }
-  // список свободных зданий
-  // let places = getFreeBuiding1();
-
-  // список свободных кабинетов
-  //оно должно выходить только после выбора здания
-  const cabinets = getFreeCabinets1();
 
   return (
     <div className={classes.main}>
@@ -229,20 +210,12 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
             Наличие интернета
           </label>
 
-          <input className={classes.btn} type='submit' name='Rooms' value='Получить свободные кабинеты' onClick={() => { getRooms() }} />
+          <input className={classes.btn} type='submit' name='Rooms' value='Получить свободные кабинеты' onClick={ () => { getFreeRooms() } } />
 
           <label>
-            Здание
-            <select className={classes.input} onChange={(e) => setSelectedBuilding(e.target.value)}>
+            Переговорная
+            <select id="rooms" className={classes.input} onChange={handleChangeRoom}>
               <option selected disabled></option>
-              ( places =! null ) ? {places.map(item => <option value={item.id}> {item.Building} </option>)}
-            </select>
-          </label>
-          <label>
-            Кабинет
-            <select className={classes.input} onChange={(e) => setSelectedRoom(e.target.value)}>
-              <option selected disabled></option>
-              {cabinets.map(item => <option value={item.id}> {item.Cabinet} </option>)}
             </select>
           </label>
           <label>
@@ -255,5 +228,3 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
     </div>
   )
 }
-// onChange={(e) => setSelectedRoom(e.target.value)}
-//handleChangeRoom

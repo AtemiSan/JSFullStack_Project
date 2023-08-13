@@ -1,7 +1,5 @@
-import { randomInt } from 'crypto';
 import { Order } from '../components/Order';
 import common from '../styles/common.module.scss';
-import { getOrders } from '../functions/orderFunc';
 import { IOrderFilters, IOrderListResponse } from '../model/order';
 import { useEffect } from 'react';
 

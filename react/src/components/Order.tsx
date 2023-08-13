@@ -56,26 +56,24 @@ export function Order(props: IOrderProps) {
   const [showForm, setShowForm] = useState(false)
   const openForm = () => setShowForm(true)
 
-  if (!UserResponse) {
+  if (!UserResponse) 
     navigate('/');
-//    return(<></>);
-  }
 
   filters = {   // Для запросов от пользователя
-    userActive: (UserResponse.role.idRole == UserRoles.USER) ? true : false,       // true - вернуть активные (status = на согласовании и согласованные + время окончания аренды ещё не истекло)
+    userActive: (UserResponse?.role.idRole == UserRoles.USER) ? true : false,       // true - вернуть активные (status = на согласовании и согласованные + время окончания аренды ещё не истекло)
     userRejected: false,     // true - вернуть отклонённые (status = отклонённые, отменённые + просроченные)
     userNotDeleted: false,   // true - вернуть все, кроме удалённых
     userDeletedOnly: false,  // true - вернуть все удалённые
     userDeletedAdd: false,		// true - вернуть все (удалённые и не удалённые)
     // Для запросов от согласующего
-    agreeActive: (UserResponse.role.idRole == UserRoles.MANAGER) ? true : false,           // true - вернуть активные для согласования (status = на согласовании и не просроченные)
+    agreeActive: (UserResponse?.role.idRole == UserRoles.MANAGER) ? true : false,           // true - вернуть активные для согласования (status = на согласовании и не просроченные)
     agreeRejected: false,         // true - вернуть отклонённые (status = отклонённые этим согласующим)
     agreeAgreemented: false,		   // true - вернуть все согласованные (status = согласованные этим согласующим)
     agreeNotDeleted: false,
     agreeDeletedOnly: false,
     agreeDeletedAdd: false,
     // Для запросов от администратора
-    adminActive: (UserResponse.role.idRole == UserRoles.MANAGER) ? true : false,          // true - вернуть активные для согласования (status = на согласовании и не просроченные)
+    adminActive: (UserResponse?.role.idRole == UserRoles.MANAGER) ? true : false,          // true - вернуть активные для согласования (status = на согласовании и не просроченные)
     adminRejected: false,        // true - вернуть отклонённые (status = отклонённые)
     adminAgreemented: false,     // true - вернуть все согласованные (status = согласованные)
     adminNotDeleted: false,
@@ -194,8 +192,8 @@ export function Order(props: IOrderProps) {
         {ButtonsOrder.map(item =>
           <button
             id={item.id}
-            className={((UserResponse.role.idRole == UserRoles.USER && (item.id == 'approve' || item.id == 'reject' || props.status.sStatus == 'Согласовано' || props.status.sStatus == 'Отменено')) ||
-              (UserResponse.role.idRole == UserRoles.MANAGER && (item.id == 'cancel' || item.id == 'change' || props.status.sStatus == 'Согласовано' || props.status.sStatus == 'Отклонено'))) ? classes.button_nodisplay : classes.button}
+            className={((UserResponse?.role.idRole == UserRoles.USER && (item.id == 'approve' || item.id == 'reject' || props.status.sStatus == 'Согласовано' || props.status.sStatus == 'Отменено')) ||
+              (UserResponse?.role.idRole == UserRoles.MANAGER && (item.id == 'cancel' || item.id == 'change' || props.status.sStatus == 'Согласовано' || props.status.sStatus == 'Отклонено'))) ? classes.button_nodisplay : classes.button}
             onClick={evt => handleClick(evt, props.idOrder, item.id)}>{item.text}</button>
         )}
       </div>

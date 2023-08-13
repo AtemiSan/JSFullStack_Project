@@ -30,22 +30,20 @@ export function AppBar({ }: IAppBarProps) {
       setUserName(user ? user.sName : 'Вы не авторизованы');
     else  
       navigate('/');
-  }, []);
+  });
 
   // забираем настоящую роль
   let UserResponse: IUserResponse;
   const userStorage = localStorage.getItem('user');
-  if (userStorage !== null) {
+  if (userStorage !== null) 
     UserResponse = JSON.parse(userStorage);
-  } else
-    navigate('/');
 
   // фильтруем кнопки меню которые нам подходят, не знаю почему ниже условия не срабатывают
   ButtonMenuFilter = [];
   ButtonsMenu.forEach((element) => {
-    if  ((UserResponse.role.idRole == UserRoles.USER && (element.id == 'lk' || element.id == 'create_order' || element.id == 'profile' )) ||
-         (UserResponse.role.idRole == UserRoles.MANAGER && (element.id == 'agreement' || element.id == 'profile' )) ||
-         UserResponse.role.idRole == UserRoles.ADMIN) {
+    if  ((UserResponse?.role.idRole == UserRoles.USER && (element.id == 'lk' || element.id == 'create_order' || element.id == 'profile' )) ||
+         (UserResponse?.role.idRole == UserRoles.MANAGER && (element.id == 'agreement' || element.id == 'profile' )) ||
+         UserResponse?.role.idRole == UserRoles.ADMIN) {
       let find = false;
       if (ButtonMenuFilter != undefined) {
         ButtonMenuFilter.forEach((elementFilt) => {
@@ -68,8 +66,8 @@ export function AppBar({ }: IAppBarProps) {
           <div className={classes.dropdown_content}>
             {ButtonMenuFilter.map(item =>
               <a><div
-                className={((UserResponse.role.idRole == UserRoles.USER && (item.id == 'registration' || item.id == 'agreement')) ||
-                  (UserResponse.role.idRole == UserRoles.MANAGER && (item.id == 'lk' || item.id == 'create_order' || item.id == 'registration'))
+                className={((UserResponse?.role.idRole == UserRoles.USER && (item.id == 'registration' || item.id == 'agreement')) ||
+                  (UserResponse?.role.idRole == UserRoles.MANAGER && (item.id == 'lk' || item.id == 'create_order' || item.id == 'registration'))
                 ) ? classes.nodisplay : classes.btn}
                 onClick={() => { navigate(item.navigate) }}>{item.text}</div></a>
             )}

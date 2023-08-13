@@ -5,8 +5,8 @@ export interface IRegisterRoomRequest {
   sAddress: string
   sCabinet: string
   iSeatingPlaces: number
-  bHasProjector: boolean
-  bHasInternet: boolean
+  bHasProjector: number
+  bHasInternet: number
   idStatus: number
   dtInEnable: Date | null
 }
@@ -54,6 +54,6 @@ export interface IRoomFreeListRequest {
   dtBegin: Date
   dtEnd: Date
   iSeatingPlaces: number
-  bHasProjector: boolean
-  bHasInternet: boolean
+  bHasProjector: number
+  bHasInternet: number
 }

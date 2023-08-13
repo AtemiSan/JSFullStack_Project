@@ -6,8 +6,8 @@ export interface IRegisterOrderRequest {
   dtEnd: Date
   sComment: string
   iSeatingPlaces: number
-  bHasProjector: boolean
-  bHasInternet: boolean
+  bHasProjector: number
+  bHasInternet: number
   idRoom: number
 }
   

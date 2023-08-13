@@ -13,10 +13,8 @@ export function Layout({}: ILayoutProps) {
 
   const navigate = useNavigate();
 
-  if (!checkUserLoggedIn()) {
+  if (!checkUserLoggedIn()) 
     navigate('/');
-//    return (<></>);
-  }
 
   return (
     <div className={classes.main}>
