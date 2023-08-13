@@ -49,3 +49,11 @@ export interface IRoomListRequest extends IPageRequest {
 export interface IRoomListResponse extends Array<IRoomResponse> {
 
 }
+
+export interface IRoomFreeListRequest {
+  dtBegin: Date
+  dtEnd: Date
+  iSeatingPlaces: number
+  bHasProjector: boolean
+  bHasInternet: boolean
+}

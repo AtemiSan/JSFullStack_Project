@@ -20,19 +20,25 @@ let ButtonMenuFilter: Array<IButtonMenu>;
 
 export function AppBar({ }: IAppBarProps) {
 
+  const navigate = useNavigate();
+
   const [userName, setUserName] = useState('');
 
   useEffect(() => {
     let user = checkUserLoggedIn();
-    setUserName(user ? user.sName : 'Вы не авторизованы');
+    if (user)
+      setUserName(user ? user.sName : 'Вы не авторизованы');
+    else  
+      navigate('/');
   }, []);
 
   // забираем настоящую роль
   let UserResponse: IUserResponse;
   const userStorage = localStorage.getItem('user');
-  if (userStorage != null) {
+  if (userStorage !== null) {
     UserResponse = JSON.parse(userStorage);
-  }
+  } else
+    navigate('/');
 
   // фильтруем кнопки меню которые нам подходят, не знаю почему ниже условия не срабатывают
   ButtonMenuFilter = [];
@@ -54,8 +60,6 @@ export function AppBar({ }: IAppBarProps) {
     }
   })
 
-  const navigate = useNavigate();
-
   return (
     <div className={classes.main}>
       <div className={classes.left_side}>
@@ -75,7 +79,7 @@ export function AppBar({ }: IAppBarProps) {
       </div>
       <div className={classes.right_side}>
         <div className={classes.user_name}>{userName}</div>
-        <div className={common.round_btn} onClick={() => { navigate('/') }}>
+        <div className={common.round_btn} onClick={() => { localStorage.clear(); navigate('/') }}>
           <img src={no_avatar}></img>
         </div>
       </div>

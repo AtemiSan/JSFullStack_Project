@@ -82,6 +82,24 @@ class CRoomController {
   }
 
   //================================================================================================================================================================================
+  async getFreeList(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (Object.keys(req.body).length) {
+        const rooms = await roomService.getFreeList(req.body);
+        res.json(rooms);
+      } else {
+        if (!Object.keys(req.body).length) {
+          console.log('CRoomController.getList: Пустой request.body');
+          res.status(400).json({ message: "В выполнении операции отказано." });
+        }
+      }
+
+    } catch(e) {
+      next(e);
+    }
+  }
+
+  //================================================================================================================================================================================
   async getList(req: Request, res: Response, next: NextFunction) {
     try {
       if (Object.keys(req.body).length && req.user && Object.keys(req.user).length) {

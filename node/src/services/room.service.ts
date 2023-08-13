@@ -1,6 +1,6 @@
 import { Op } from "sequelize";
 import { IUserToken } from "../dtos/data.dto";
-import { IRegisterRoomRequest, IRoomListRequest, IRoomListResponse, IRoomRequest, IRoomResponse, IRoomUpdateRequest } from "../dtos/room.dto";
+import { IRegisterRoomRequest, IRoomFreeListRequest, IRoomListRequest, IRoomListResponse, IRoomRequest, IRoomResponse, IRoomUpdateRequest } from "../dtos/room.dto";
 import Meeting_Room from "../models/room.model";
 import roomModel from "../models/room.model";
 import statusModel, { Statuses } from "../models/status.model";
@@ -97,6 +97,38 @@ class CRoomService {
         console.log('CRoomService.deleteRoom: Колизия в БД, найдено более одной записи. idRoom = ' + reqDTO.idRoom);
       }
     }
+  }
+
+  //================================================================================================================================================================================
+  async getFreeList(reqDTO: IRoomFreeListRequest) {
+    let rooms: Meeting_Room[];
+    //===========================================================
+    // Только свободные переговорные на указанный интервал
+    console.log(reqDTO);
+    if (reqDTO.dtBegin && reqDTO.dtEnd) {
+      let addonCond = '';
+      if (reqDTO.bHasInternet)
+        addonCond += 'AND B_HAS_INTERNET = 1 ';
+      if (reqDTO.bHasProjector) 
+        addonCond += 'AND B_HAS_PROJECTOR = 1 ';
+      rooms = await sequelize.query(`SELECT A.ID_ROOM as "idRoom", A.S_ADDRESS as "sAddress", A.S_CABINET as "sCabinet", A.I_SEATING_PLACES as "iSeatingPlaces", ` +
+          `A.B_HAS_PROJECTOR as "bHasProjector", A.B_HAS_INTERNET as "bHasInternet", A.ID_STATUS as "idStatus", A.DT_IN_ENABLE as "dtInEnable", A.DT_INS as "dtInst", ` +
+          `A.DT_UPD as "dtUpd", A.DT_DEL as "dtDel" ` +
+        `FROM MEETING_ROOM A ` +
+        `WHERE ID_STATUS = ${Statuses.ENABLED} AND I_SEATING_PLACES >= ${reqDTO.iSeatingPlaces} ${addonCond} ` +
+          `AND NOT EXISTS(SELECT ID_ORDER FROM ORDER_MEETING_ROOM B WHERE A.ID_ROOM = B.ID_ROOM AND B.ID_STATUS = ${Statuses.AGREED} ` +
+            `AND ('${reqDTO.dtBegin}' BETWEEN B.DT_BEGIN AND B.DT_END ` +
+              `OR '${reqDTO.dtEnd}' BETWEEN B.DT_BEGIN AND B.DT_END ` +
+              `OR B.DT_BEGIN BETWEEN '${reqDTO.dtBegin}' AND '${reqDTO.dtEnd}'))`, 
+        {
+          model: roomModel,
+          mapToModel: true 
+      });
+    } else {
+      return null;
+    }
+    console.log(rooms)
+    return getRoomListResponse(rooms);
   }
 
   //================================================================================================================================================================================

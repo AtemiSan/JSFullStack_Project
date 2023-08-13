@@ -38,7 +38,7 @@ export interface IOrderProps {
 // забираем настоящую роль
 let UserResponse: IUserResponse;
 const userStorage = localStorage.getItem('user');
-if (userStorage != null) {
+if (userStorage !== null) {
   UserResponse = JSON.parse(userStorage);
 }
 
@@ -46,9 +46,15 @@ if (userStorage != null) {
 export function Order(props: IOrderProps) {
 
   const navigate = useNavigate();
+
   const edit = () => navigate('order')
   const [showForm, setShowForm] = useState(false)
   const openForm = () => setShowForm(true)
+
+  if (!UserResponse) {
+    navigate('/');
+//    return(<></>);
+  }
 
   let headersSet = new Headers();
   headersSet.append('Content-Type', 'application/json; charset=utf-8');

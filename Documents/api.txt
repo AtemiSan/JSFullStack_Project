@@ -13,6 +13,7 @@ get		api/user/order/exec						получение заявки IOrderRequest / IO
 delete	api/user/order/exec						удаление заявки IOrderDeleteRequest / Response 200
 post	api/user/order/getList					IOrderListRequest / IOrderListResponse
 post	api/user/order/changeStatus				Отклонить автором IOrderChangeStatusRequest / IOrderResponse  (не забыть добавить проверку статуса, данным запросом нельзя согласовать)
+post	api/user/room/getFreeList				Для запроса свободных переговорных IRoomFreeListRequest / IRoomListResponse
 post	api/user/room/getList					IRoomListRequest / IRoomListResponse
 
 post	api/admin/user/exec						добавление пользователя IRegisterUserRequest / Response 201
