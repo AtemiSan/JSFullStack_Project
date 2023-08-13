@@ -118,3 +118,7 @@ insert into MEETING_ROOM (s_address, s_cabinet, i_seating_places, b_has_projecto
 	values ('building 3', '115', 35, 1, 1, 0);
 insert into MEETING_ROOM (s_address, s_cabinet, i_seating_places, b_has_projector, b_has_internet, id_status) 
 	values ('building 3', '114', 25, 1, 0, 0);
+
+
+insert into order_meeting_room (dt_Begin, dt_End, s_comment, i_seating_places, b_has_projector, b_has_internet, id_user, id_room, id_status)
+	values (to_date('13.08.2023 23:30', 'DD.MM.YYYY HH24:MI'), to_date('13.08.2023 23:50', 'DD.MM.YYYY HH24:MI'), '', 30, 1, 1, 1, 4, 10);

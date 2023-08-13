@@ -162,7 +162,7 @@ class COrderService {
     //********************************************************************************
     //===========================================================
     // Только активные заявки для согласования (по согласующему)
-    } else if (reqDTO.filters.agreeActive && reqUser.role.idRole == UserRoles.MANAGER) {
+    } else if (reqDTO.filters.agreeActive && (reqUser.role.idRole == UserRoles.MANAGER || reqUser.role.idRole == UserRoles.ADMIN)) {
       orders = await orderModel.findAll({
         where: {
           idStatus: Statuses.NEW,
@@ -174,7 +174,7 @@ class COrderService {
       });
     //===========================================================
     // Только отклонённые заявки (по согласующему)
-    } else if (reqDTO.filters.agreeRejected && reqUser.role.idRole == UserRoles.MANAGER) {
+    } else if (reqDTO.filters.agreeRejected && (reqUser.role.idRole == UserRoles.MANAGER || reqUser.role.idRole == UserRoles.ADMIN)) {
       orders = await orderModel.findAll({
         where: {
           idStatus: Statuses.REJECTED,
@@ -184,7 +184,7 @@ class COrderService {
       });
     //===========================================================
     // Только согласованные заявки (по согласующему)
-    } else if (reqDTO.filters.agreeRejected && reqUser.role.idRole == UserRoles.MANAGER) {
+    } else if (reqDTO.filters.agreeRejected && (reqUser.role.idRole == UserRoles.MANAGER || reqUser.role.idRole == UserRoles.ADMIN)) {
       orders = await orderModel.findAll({
         where: {
           idStatus: Statuses.AGREED,
@@ -194,7 +194,7 @@ class COrderService {
       });
     //===========================================================
     // Все заявки, кроме удалённых (по согласующему)
-    } else if (reqDTO.filters.agreeNotDeleted && reqUser.role.idRole == UserRoles.MANAGER) {
+    } else if (reqDTO.filters.agreeNotDeleted && (reqUser.role.idRole == UserRoles.MANAGER || reqUser.role.idRole == UserRoles.ADMIN)) {
       orders = await orderModel.findAll({
         where: {
           idUserAgreement: reqUser.idUser
@@ -203,7 +203,7 @@ class COrderService {
       });
     //===========================================================
     // Все удалённые заявки (по согласующему)
-    } else if (reqDTO.filters.agreeDeletedOnly && reqUser.role.idRole == UserRoles.MANAGER) {
+    } else if (reqDTO.filters.agreeDeletedOnly && (reqUser.role.idRole == UserRoles.MANAGER || reqUser.role.idRole == UserRoles.ADMIN)) {
       orders = await orderModel.findAll({
         where: {
           dtDel: {
@@ -215,7 +215,7 @@ class COrderService {
       });
     //===========================================================
     // Все заявки (по согласующему)
-    } else if (reqDTO.filters.agreeDeletedAdd && reqUser.role.idRole == UserRoles.MANAGER) {
+    } else if (reqDTO.filters.agreeDeletedAdd && (reqUser.role.idRole == UserRoles.MANAGER || reqUser.role.idRole == UserRoles.ADMIN)) {
       orders = await orderModel.findAll({
         where: {
           idUserAgreement: reqUser.idUser
