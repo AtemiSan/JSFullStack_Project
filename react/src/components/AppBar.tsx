@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import classes from '../styles/app_bar.module.scss';
 import common from '../styles/common.module.scss';
 import no_avatar from '../img/no_avatar_30.png';
@@ -8,6 +8,7 @@ import { getButtonsMenu } from '../functions/screenFunc';
 import { IRole, UserRoles } from '../model/data';
 import { IUserResponse } from '../model/user';
 import { IButtonMenu } from '../model/screen';
+import { checkUserLoggedIn } from '../functions/user.func';
 
 export interface IAppBarProps {
 
@@ -22,8 +23,8 @@ export function AppBar({ }: IAppBarProps) {
   const [userName, setUserName] = useState('');
 
   useEffect(() => {
-    let user: string = localStorage.getItem('userName') ? String(localStorage.getItem('userName')) : 'Вы не авторизованы';
-    setUserName(user);
+    let user = checkUserLoggedIn();
+    setUserName(user ? user.sName : 'Вы не авторизованы');
   }, []);
 
   // забираем настоящую роль
@@ -39,44 +40,22 @@ export function AppBar({ }: IAppBarProps) {
     if  ((UserResponse.role.idRole == UserRoles.USER && (element.id == 'lk' || element.id == 'create_order' || element.id == 'profile' )) ||
          (UserResponse.role.idRole == UserRoles.MANAGER && (element.id == 'agreement' || element.id == 'profile' )) ||
          UserResponse.role.idRole == UserRoles.ADMIN) {
-    let find = false;
-    if (ButtonMenuFilter != undefined) {
-    ButtonMenuFilter.forEach((elementFilt) => {
-      if (elementFilt.id === element.id) {
-        find = true
+      let find = false;
+      if (ButtonMenuFilter != undefined) {
+        ButtonMenuFilter.forEach((elementFilt) => {
+          if (elementFilt.id === element.id) {
+            find = true
+          }
+        }) 
       }
-    }) }
-    if (find == false) {
-      ButtonMenuFilter.push(element)
+      if (find == false) {
+        ButtonMenuFilter.push(element)
+      }
     }
-  }
-})
+  })
 
   const navigate = useNavigate();
-  /*let role: IRole = {
-    idRole: 0,
-    sRole: 'админ'
-  };*/
 
-  /*
-    return (
-      <div className={classes.main}>
-        <div className={classes.left_side}>
-          <div className={classes.mainMenu} onClick = {() => {}}>
-            <img src={menu}></img>         
-          </div>
-  
-          <div className={common.title}>Аренда переговорных</div>
-        </div>
-        <div className={classes.right_side}>
-          <div className={classes.user_name}>{userName}</div>
-          <div className={common.round_btn} onClick = {() => {navigate('/')}}>
-            <img src={no_avatar}></img>
-          </div>
-        </div>
-      </div>
-    )
-  */
   return (
     <div className={classes.main}>
       <div className={classes.left_side}>
@@ -103,6 +82,3 @@ export function AppBar({ }: IAppBarProps) {
     </div>
   )
 }
-
-// ||
-//(UserResponse.role.idRole == UserRoles.ADMIN && (item.id == 'lk' || item.id == 'create_order' || item.id == 'agreement'))
