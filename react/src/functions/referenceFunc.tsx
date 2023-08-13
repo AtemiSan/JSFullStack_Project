@@ -1,4 +1,4 @@
-import { IDepartment, IDolgListResponse, IDolgnost, IRole } from "../model/data";
+import { IDepListResponse, IDepartment, IDolgListResponse, IDolgnost, IRole, IRoleListResponse } from "../model/data";
 import { API_PUBLIC_DATA } from "../settings";
 import { addAuthHeader } from "./headers.func";
 
@@ -45,6 +45,7 @@ export async function getDolgnosts1() {
     if (DolgListResponse.status == 200) {
         let resultDolgListResponse = await DolgListResponse.json() as IDolgListResponse;
         Dolgnosts = resultDolgListResponse;
+        localStorage.setItem('dolgnost', JSON.stringify(resultDolgListResponse));
         console.log('dolg_ok')
     } else {
         console.log('dolg_NO_ok')
@@ -80,5 +81,48 @@ const Departments = [
 export function getDepartments() {
     return (
         Departments
+    )
+}
+
+let Department: IDepListResponse;
+export async function getDepartments1() {
+    //IDepListResponse
+    let DepListResponse = await fetch(API_PUBLIC_DATA + '/getDepartList', {
+        method: 'POST'
+    });
+
+    console.log(DepListResponse)
+
+    if (DepListResponse.status == 200) {
+        let resultDepListResponse = await DepListResponse.json() as IDepListResponse;
+        Department = resultDepListResponse;
+        localStorage.setItem('depart', JSON.stringify(resultDepListResponse));
+        console.log('dolg_ok')
+    } else {
+        console.log('dolg_NO_ok')
+    }
+    return (
+        Department
+    )
+}
+
+let rolesResp: IRoleListResponse;
+export async function getRoles1() {
+    let RoleListResponse = await fetch(API_PUBLIC_DATA + '/getRoleList', {
+        method: 'POST'
+    });
+
+    console.log(RoleListResponse)
+
+    if (RoleListResponse.status == 200) {
+        let resultRoleListResponse = await RoleListResponse.json() as IRoleListResponse;
+        rolesResp = resultRoleListResponse;
+        localStorage.setItem('role', JSON.stringify(resultRoleListResponse));
+        console.log('roles_ok')
+    } else {
+        console.log('roles_NO_ok')
+    }
+    return (
+        rolesResp
     )
 }

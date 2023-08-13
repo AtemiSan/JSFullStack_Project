@@ -134,11 +134,14 @@ export async function getOrderList(filters: IOrderFilters) {
     });
 
     console.log(responseOrders);
-
+    console.log('responseOrders status:' ,responseOrders.status);    
+    
     if (responseOrders.status == 200) {
         console.log('Orders_OK');      
         let resultOrders = await responseOrders.json() as IOrderListResponse;
+        localStorage.setItem('orders', JSON.stringify(resultOrders));
         Orders = resultOrders
+        console.log('resultOrders')
         console.log(resultOrders)
     } else {
         console.log('Not_resp');
