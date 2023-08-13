@@ -79,9 +79,18 @@ export function MyOrdersPage({ }: IMyOrdersPageProps) {
   console.log(userStorage)
   if (userStorage != null) {
     rows = JSON.parse(userStorage);
-    
   }
 
+  useEffect(() => {
+    // Обновляем
+    const userStorage = localStorage.getItem('orders');
+    console.log('userStorage')
+    console.log(userStorage)
+    if (userStorage != null) {
+      rows = JSON.parse(userStorage);
+    }
+  });
+  
   if (rows != null) {
     return (
       <>

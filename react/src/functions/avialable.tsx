@@ -69,6 +69,7 @@ export async function getFreeBuiding(filters: IRoomFilters) {
 
   if (responseBuilding.status == 200) {
     let resultBuildings = await responseBuilding.json() as IRoomListResponse;
+    console.log(resultBuildings)
     allBuildings = resultBuildings.map(item => createDataB(1, item.sAddress))
     // удаляем повторяющиеся
     Buildings = [allBuildings[0]]

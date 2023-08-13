@@ -56,8 +56,6 @@ export function Menu({ }: IMenuProps) {
     adminDeletedOnly: false,
     adminDeletedAdd: false
   };
-
-
   async function getOrdersMenu(navig: string) {
     const orders = await getOrderList(filters);
     console.log(orders);

@@ -2,18 +2,29 @@ import { useEffect, useState } from 'react';
 import common from '../styles/common.module.scss';
 import classes from '../styles/profile.module.scss';
 import { getFreeBuiding, getFreeBuiding1, getFreeCabinets, getFreeCabinets1 } from '../functions/avialable';
-import { Building } from '../model/data';
+import { Building, UserRoles } from '../model/data';
 import { IRoomFilters, IRoomListResponse } from '../model/room';
 import { API_USER_ORDER } from '../settings';
 import { addAuthHeader } from '../functions/headers.func';
-import { IRegisterOrderRequest } from '../model/order';
+import { IOrderFilters, IRegisterOrderRequest } from '../model/order';
 import { useNavigate } from 'react-router-dom';
+import { IUserResponse } from '../model/user';
+import { getOrderList } from '../functions/orderFunc';
 
 export interface ICreateOrderPageProps {
 
 }
 
 let places: Array<Building>;
+let placesNew: Array<Building> = [];
+let filters: IOrderFilters;
+// забираем настоящую роль
+let UserResponse: IUserResponse;
+const userStorage = localStorage.getItem('user');
+if (userStorage != null) {
+  UserResponse = JSON.parse(userStorage);
+}
+
 export function CreateOrderPage({ }: ICreateOrderPageProps) {
   // список свободных зданий
   //let buildings: IRoomListResponse;
@@ -21,6 +32,8 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
   //let places: Array<Building>;
   let idRoom: number;
   places = [];
+
+
 
   const navigate = useNavigate();
 
@@ -95,59 +108,96 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
     } else if (new Date(fDtEnd) < new Date(fDtBegin)) {
       alert('Время начала не может быть меньше времени окончания.')
     } else {
-
-      // найдем ID кабинета
-      idRoom = 0;
-      if (selectedRoom != '') {
-        {
-          cabinets.forEach(element => {
-            if (element.id.toString() === selectedRoom) {
-              idRoom = element.id;
-            }
-          });
-        }
-      }
-
-      let RegisterOrderRequest: IRegisterOrderRequest = {
-        dtBegin: new Date(fDtBegin),
-        dtEnd: new Date(fDtEnd),
-        sComment: fComment,
-        iSeatingPlaces: fSeatingPlaces,
-        bHasProjector: fHasProjector,
-        bHasInternet: fHasInternet,
-        idRoom: idRoom
-      };
-
-      // добавление заявки IRegisterOrderRequest / Response 200
-      let headersSet = new Headers();
-      headersSet.append('Content-Type', 'application/json; charset=utf-8');
-      addAuthHeader(headersSet);
-      let responsePostOrder = await fetch(API_USER_ORDER + '/exec', {
-        method: 'POST',
-        headers: headersSet,
-        body: JSON.stringify(RegisterOrderRequest)
-      });
-      if (responsePostOrder.status == 200) {
-        alert('Заявка отправлена');
-        // переход на список Заявок
-        navigate('/lk');
-      } else {
-        alert('Заявка не отправлена. Оишбка при отправке');
-      }
     }
   }
 
   async function getRooms() {
-    roomFilters = { dtBegin: new Date(fDtBegin), dtEnd: new Date(fDtEnd), adminNotDeleted: false, adminDeletedOnly: false, adminDeletedAdd: false };
-    places = await getFreeBuiding(roomFilters);
+    if (fDtBegin != '' && fDtEnd != '') {
+      roomFilters = { dtBegin: new Date(fDtBegin), dtEnd: new Date(fDtEnd), adminNotDeleted: false, adminDeletedOnly: false, adminDeletedAdd: false };
+      placesNew = await getFreeBuiding(roomFilters);
+      places = placesNew;
+      return placesNew
+    }
+  }
+
+
+  // сохранить/отправить Заявку
+  async function sendOrder() {
+    // найдем ID кабинета
+    idRoom = 0;
+    if (selectedRoom != '') {
+      {
+        cabinets.forEach(element => {
+          if (element.id.toString() === selectedRoom) {
+            idRoom = element.id;
+          }
+        });
+      }
+    }
+    idRoom = 7;
+
+    let RegisterOrderRequest: IRegisterOrderRequest = {
+      dtBegin: new Date(fDtBegin),
+      dtEnd: new Date(fDtEnd),
+      sComment: fComment,
+      iSeatingPlaces: fSeatingPlaces,
+      bHasProjector: (fHasProjector == true) ? 1 : 0,
+      bHasInternet: (fHasInternet == true) ? 1 : 0,
+      idRoom: idRoom
+    };
+
+    // добавление заявки IRegisterOrderRequest / Response 200
+    let headersSet = new Headers();
+    headersSet.append('Content-Type', 'application/json; charset=utf-8');
+    addAuthHeader(headersSet);
+    let responsePostOrder = await fetch(API_USER_ORDER + '/exec', {
+      method: 'POST',
+      headers: headersSet,
+      body: JSON.stringify(RegisterOrderRequest)
+    });
+    if (responsePostOrder.status == 201) {
+      alert('Заявка отправлена');
+      // переход на список Заявок
+      getOrdersMenu('')
+      navigate('/lk');
+    } else {
+      alert('Заявка не отправлена. Оишбка при отправке');
+    }
   }
 
   useEffect(() => {
     getRooms();
+    places = placesNew
   }, [])
 
+  filters = {   // Для запросов от пользователя
+    userActive: (UserResponse.role.idRole == UserRoles.USER) ? true : false,       // true - вернуть активные (status = на согласовании и согласованные + время окончания аренды ещё не истекло)
+    userRejected: false,     // true - вернуть отклонённые (status = отклонённые, отменённые + просроченные)
+    userNotDeleted: false,   // true - вернуть все, кроме удалённых
+    userDeletedOnly: false,  // true - вернуть все удалённые
+    userDeletedAdd: false,		// true - вернуть все (удалённые и не удалённые)
+    // Для запросов от согласующего
+    agreeActive: (UserResponse.role.idRole == UserRoles.MANAGER) ? true : false,           // true - вернуть активные для согласования (status = на согласовании и не просроченные)
+    agreeRejected: false,         // true - вернуть отклонённые (status = отклонённые этим согласующим)
+    agreeAgreemented: false,		   // true - вернуть все согласованные (status = согласованные этим согласующим)
+    agreeNotDeleted: false,
+    agreeDeletedOnly: false,
+    agreeDeletedAdd: false,
+    // Для запросов от администратора
+    adminActive: (UserResponse.role.idRole == UserRoles.MANAGER) ? true : false,          // true - вернуть активные для согласования (status = на согласовании и не просроченные)
+    adminRejected: false,        // true - вернуть отклонённые (status = отклонённые)
+    adminAgreemented: false,     // true - вернуть все согласованные (status = согласованные)
+    adminNotDeleted: false,
+    adminDeletedOnly: false,
+    adminDeletedAdd: false
+  };
+  async function getOrdersMenu(navig: string) {
+    const orders = await getOrderList(filters);
+    console.log(orders);
+    //navigate(navig)
+  }
   // список свободных зданий
- // let places = getFreeBuiding1();
+  // let places = getFreeBuiding1();
 
   // список свободных кабинетов
   //оно должно выходить только после выбора здания
@@ -178,12 +228,14 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
             <input className={classes.checkbox} type='checkbox' checked={fHasInternet} onChange={handleChangeHasInternet} />
             Наличие интернета
           </label>
+
           <input className={classes.btn} type='submit' name='Rooms' value='Получить свободные кабинеты' onClick={() => { getRooms() }} />
+
           <label>
             Здание
             <select className={classes.input} onChange={(e) => setSelectedBuilding(e.target.value)}>
               <option selected disabled></option>
-              {places.map(item => <option value={item.id}> {item.Building} </option>)}
+              ( places =! null ) ? {places.map(item => <option value={item.id}> {item.Building} </option>)}
             </select>
           </label>
           <label>
@@ -197,7 +249,7 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
             Комментарий
             <input className={classes.input} type='string' placeholder='Комментарий' value={fComment} onChange={handleChangeComment} />
           </label>
-          <input className={classes.btn} type='submit' name='submit' value='Отправить' />
+          <input className={classes.btn} type='submit' name='submit' value='Отправить' onClick={() => { sendOrder() }} />
         </form>
       </div>
     </div>
