@@ -5,7 +5,6 @@ import { IOrderProps } from './Order';
 
 export function OrderMain(props: IOrderProps) {
 
-  //const [dtTime, setDtTime] = useState(''); //{getFormatedDate(props.dtTime_from)}
   const [dtTimeF, setDtTimeF] = useState('');
   const [dtTimeT, setDtTimeT] = useState('');
   const [seatingPlaces, setSeatingPlaces] = useState('');//props.seatingPlaces);

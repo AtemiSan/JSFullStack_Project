@@ -138,6 +138,7 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
   }
 
   async function getRooms() {
+    roomFilters = { dtBegin: new Date(fDtBegin), dtEnd: new Date(fDtEnd), adminNotDeleted: false, adminDeletedOnly: false, adminDeletedAdd: false };
     places = await getFreeBuiding(roomFilters);
   }
 

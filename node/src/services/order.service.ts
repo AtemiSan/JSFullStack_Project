@@ -60,7 +60,8 @@ class COrderService {
     const order = await orderModel.findAll({
       where: {
         idOrder: reqDTO.idOrder
-      }
+      },
+      include: {model: userModel, as: 'user'}
     })
 
     if (order && order.length == 1) {

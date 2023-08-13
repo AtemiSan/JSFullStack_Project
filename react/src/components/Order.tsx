@@ -5,6 +5,7 @@ import { IRole, IRoom, IStatus, Statuses, UserRoles } from '../model/data';
 import { IOrderChangeStatusRequest, IOrderDeleteRequest, IOrderListRequest, IOrderResponse } from '../model/order';
 import { API_USER_ORDER } from '../settings';
 import { addAuthHeader } from '../functions/headers.func';
+import { IUserResponse } from '../model/user';
 
 // для списка кнопок
 export interface ButtonOrder {
@@ -16,7 +17,7 @@ const createData = (
   text: string): ButtonOrder => ({ id, text })
 
 const ButtonsOrder = [
-  createData('change', 'Изменить'),
+  //createData('change', 'Изменить'),
   createData('cancel', 'Отменить'),
   createData('approve', 'Согласовать'),
   createData('reject', 'Отклонить'),
@@ -34,6 +35,14 @@ export interface IOrderProps {
   status: IStatus
 }
 
+// забираем настоящую роль
+let UserResponse: IUserResponse;
+const userStorage = localStorage.getItem('user');
+if (userStorage != null) {
+  UserResponse = JSON.parse(userStorage);
+}
+
+
 export function Order(props: IOrderProps) {
 
   const navigate = useNavigate();
@@ -47,74 +56,74 @@ export function Order(props: IOrderProps) {
 
   const handleClick = async (event: React.MouseEvent<unknown>, id: IOrderResponse["idOrder"], btn_id: string) => {
     // согласовать
-    if (btn_id == 'approve') { 
+    if (btn_id == 'approve') {
       let OrderChangeStatusRequest: IOrderChangeStatusRequest;
-      OrderChangeStatusRequest = { idOrder: props.idOrder, idStatus: 11 };     
+      OrderChangeStatusRequest = { idOrder: props.idOrder, idStatus: 11 };
       let responseChangeStatusRequest = await fetch(API_USER_ORDER + '/changeStatus', {
         method: 'POST',
         headers: headersSet,
         body: JSON.stringify(OrderChangeStatusRequest)
-      }); 
+      });
       if (responseChangeStatusRequest.status == 200) {
-         alert('Заявка согласована!'); 
-         // чтобы кнопки пропали 
-         props.status.idStatus = Statuses.AGREED;
+        alert('Заявка согласована!');
+        // чтобы кнопки пропали 
+        props.status.idStatus = Statuses.AGREED;
       } else {
         console.log('Bad_resp');
-      }   
-      
+      }
+
     }
 
     //отклонить
-    else if (btn_id == 'reject') { 
+    else if (btn_id == 'reject') {
       let OrderChangeStatusRequest: IOrderChangeStatusRequest;
-      OrderChangeStatusRequest = { idOrder: props.idOrder, idStatus: 12 };     
+      OrderChangeStatusRequest = { idOrder: props.idOrder, idStatus: 12 };
       let responseChangeStatusRequest = await fetch(API_USER_ORDER + '/changeStatus', {
         method: 'POST',
         headers: headersSet,
         body: JSON.stringify(OrderChangeStatusRequest)
-      }); 
+      });
       if (responseChangeStatusRequest.status == 200) {
-        alert('Заявка отклонена!'); 
-         // чтобы кнопки пропали 
-         props.status.idStatus = Statuses.REJECTED;
+        alert('Заявка отклонена!');
+        // чтобы кнопки пропали 
+        props.status.idStatus = Statuses.REJECTED;
       } else {
         console.log('Bad_resp');
-      }       
-      
+      }
     }
 
     //Удалить
     else if (btn_id == 'cancel') {
       let OrderDeleteRequest: IOrderDeleteRequest;
-      OrderDeleteRequest = { idOrder: props.idOrder };     
+      OrderDeleteRequest = { idOrder: props.idOrder };
       let responseDeleteOrder = await fetch(API_USER_ORDER + '/exec', {
         method: 'DELETE',
         headers: headersSet,
         body: JSON.stringify(OrderDeleteRequest)
-      }); 
+      });
+      console.log('удаление заявки')
+      console.log(responseDeleteOrder)
+      console.log(OrderDeleteRequest)
       if (responseDeleteOrder.status == 200) {
-         // Удалилось
-         alert('Заявка отменена!');
-         // чтобы кнопки пропали 
-         props.status.idStatus = Statuses.CANCELED_BY_USER;
+        // Удалилось
+        alert('Заявка отменена!');
+        // чтобы кнопки пропали 
+        props.status.idStatus = Statuses.CANCELED_BY_USER;
       } else {
-        console.log('Bad_resp');
-      }          
+        alert('Удалени Заявка не получилось!');
+      }
     }
     else navigate(`order`); // как передать параметры ??
   }
 
   const getFormatedDate = (dt: Date) => {
-    let day: string = (dt.getDate() > 9 ? dt.getDate().toString() : '0' + dt.getDate().toString());
-    let month: string = (dt.getMonth() > 9 ? dt.getMonth().toString() : '0' + dt.getMonth().toString());
-
-    return day + '.' + month + '.' + dt.getFullYear() + '  ' + dt.getHours() + ':' + dt.getMinutes();
+    let sss = new Date(dt)
+    //let day: string = (dt.getDate() > 9 ? dt.getDate().toString() : '0' + dt.getDate().toString());
+    //let month: string = (dt.getMonth() > 9 ? dt.getMonth().toString() : '0' + dt.getMonth().toString());  
+    return sss.toLocaleDateString('ru-Ru') + '  ' + sss.toLocaleTimeString('ru-Ru');
+    //return day + '.' + month + '.' + dt.getFullYear() + '  ' + dt.getHours() + ':' + dt.getMinutes();
   }
 
-  //let role = {idRole: 0, sRole: 'admin'}
-  let role = { idRole: 1, sRole: 'manager' }
-  //let role = {idRole: 2, sRole: 'user'}
 
   return (
     <div className={classes.card}>
@@ -132,8 +141,8 @@ export function Order(props: IOrderProps) {
         {ButtonsOrder.map(item =>
           <button
             id={item.id}
-            className={((role.idRole == UserRoles.USER && (item.id == 'approve' || item.id == 'reject' || props.status.sStatus == 'Согласовано' || props.status.sStatus == 'Отменено')) ||
-              (role.idRole == UserRoles.MANAGER && (item.id == 'cancel' || item.id == 'change' || props.status.sStatus == 'Согласовано' || props.status.sStatus == 'Отклонено'))) ? classes.button_nodisplay : classes.button}
+            className={((UserResponse.role.idRole == UserRoles.USER && (item.id == 'approve' || item.id == 'reject' || props.status.sStatus == 'Согласовано' || props.status.sStatus == 'Отменено')) ||
+              (UserResponse.role.idRole == UserRoles.MANAGER && (item.id == 'cancel' || item.id == 'change' || props.status.sStatus == 'Согласовано' || props.status.sStatus == 'Отклонено'))) ? classes.button_nodisplay : classes.button}
             onClick={evt => handleClick(evt, props.idOrder, item.id)}>{item.text}</button>
         )}
       </div>
@@ -141,6 +150,7 @@ export function Order(props: IOrderProps) {
   )
 }
 
+//      <div className={classes.item}>Время аренды: {getFormatedDate(props.dtBegin)} - {getFormatedDate(props.dtEnd)}</div>
 /*
       <div className={classes.item}>Здание :             {props.sAdress}</div>  ????
       <div className={classes.item}>Помещение :           {props.sCabinet}</div>*/

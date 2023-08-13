@@ -51,12 +51,14 @@ filters = {   // Для запросов от пользователя
   adminDeletedAdd: false
 };
 // получем списов заявок
-let rows: IOrderListResponse = [];
+//let rows: IOrderListResponse = [];
 //let rows = getOrders(filters);   // заглушка
 //const oderList = getOrderList(filters); // из бэка
 //let rows: Array<IOrderListResponse>;
 //rows = oderList.map(item => createDataB(1, item.sAddress))
 
+// забираем настоящие pfzdrb
+let rows: IOrderListResponse;
 
 export function MyOrdersPage({ }: IMyOrdersPageProps) {
 
@@ -67,12 +69,20 @@ export function MyOrdersPage({ }: IMyOrdersPageProps) {
     alert('Заявка отправлена');
   }*/
 
-  useEffect(() => {
-    //rows = getOrderList(filters);
-    rows = getOrders(filters);
-  }, [])
+  /*useEffect(() => {
+     //rows = getOrderList(filters); 
+     rows = getOrders(filters);
+   }, [])*/
 
- // if (rows != null) {
+  const userStorage = localStorage.getItem('orders');
+  console.log('userStorage')
+  console.log(userStorage)
+  if (userStorage != null) {
+    rows = JSON.parse(userStorage);
+    
+  }
+
+  if (rows != null) {
     return (
       <>
         <div className={common.title}>
@@ -93,9 +103,9 @@ export function MyOrdersPage({ }: IMyOrdersPageProps) {
         )}
       </>
     )
- /* } else
+  } else
     return (
       <div className={common.title}>
         Заявок нет
-      </div>);*/
+      </div>);
 }
