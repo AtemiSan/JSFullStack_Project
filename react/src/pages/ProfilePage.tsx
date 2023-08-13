@@ -2,22 +2,31 @@ import classes from '../styles/profile.module.scss';
 import common from '../styles/common.module.scss';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getDepartments, getDolgnosts } from '../functions/referenceFunc';
+import { getDepartments, getDolgnosts, getDolgnosts1 } from '../functions/referenceFunc';
+import { IUserResponse } from '../model/user';
 
 export interface IProfilePageProps {
 
 }
 
-export function ProfilePage({}: IProfilePageProps) {
+  // заберем настоящие данные юзера 
+  let UserResponse: IUserResponse;
+  const userStorage = localStorage.getItem('user');
+  if (userStorage != null) {
+    UserResponse = JSON.parse(userStorage);
+  }
+
+export function ProfilePage({ }: IProfilePageProps) {
 
   const navigate = useNavigate();
 
-  const [userFam, setUserFam] = useState('');
-  const [userName, setUserName] = useState('');
-  const [userOtch, setUserOtch] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [role, setRole] = useState(false);
+  const [userFam, setUserFam] = useState(UserResponse.sFam);
+  const [userName, setUserName] = useState(UserResponse.sName);
+  const [userOtch, setUserOtch] = useState(UserResponse.sOtch);
+  const [phone, setPhone] = useState(UserResponse.sPhone);
+  const [email, setEmail] = useState(UserResponse.sEmail);
+  const [role, setRole] = useState(UserResponse.role);
+  const [dolg, setDolg] = useState(UserResponse.dolg);
 
   const handleChangeUserFam = (e: React.FormEvent<HTMLInputElement>) => {
     setUserFam(e.currentTarget.value);
@@ -41,21 +50,26 @@ export function ProfilePage({}: IProfilePageProps) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
   }
 
   useEffect(() => {
-    setUserFam(localStorage.getItem('userFam') ? String(localStorage.getItem('userFam')) : '');
+    /*setUserFam(localStorage.getItem('userFam') ? String(localStorage.getItem('userFam')) : '');
     setUserName(localStorage.getItem('userName') ? String(localStorage.getItem('userName')) : '');
     setUserOtch(localStorage.getItem('userOtch') ? String(localStorage.getItem('userOtch')) : '');
     setPhone(localStorage.getItem('phone') ? String(localStorage.getItem('phone')) : '');
-    setEmail(localStorage.getItem('email') ? String(localStorage.getItem('email')) : '');
+    setEmail(localStorage.getItem('email') ? String(localStorage.getItem('email')) : '');*/
+    setUserFam(UserResponse.sFam);
+    setUserName(UserResponse.sName);
+    setUserOtch(UserResponse.sOtch);
+    setPhone(UserResponse.sPhone);
+    setEmail(UserResponse.sEmail);
   }, [])
 
-  const dolgnosts = getDolgnosts();
+  let dolgnosts = getDolgnosts();
   const departments = getDepartments();
-  
-  
+
+
   let save_btn;
   if (role) {
     save_btn = <input className={classes.btn} type='submit' name='submit' value='Сохранить' />;
@@ -91,16 +105,16 @@ export function ProfilePage({}: IProfilePageProps) {
             Должность
             <select className={classes.input} required>
               <option selected disabled></option>
-              {dolgnosts.map(item => <option value={item.idDolg}> {item.sDolg} </option>)}
+               {dolgnosts.map(item => <option value={item.idDolg}> {item.sDolg} </option>) } 
             </select>
-          </label>    
+          </label>
           <label>
             Подразделение
             <select className={classes.input} required>
               <option selected disabled></option>
               {departments.map(item => <option value={item.idDep}> {item.sDep} </option>)}
             </select>
-          </label>    
+          </label>
 
           <button className={classes.btn} type='button' onClick={() => { navigate('/lk/changePassw') }}>Изменить пароль</button>
           {save_btn}

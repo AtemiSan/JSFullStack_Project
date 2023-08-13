@@ -27,6 +27,7 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
   const [fHasProjector, setHasProjector] = useState(false);
   const [fHasInternet, setHasInternet] = useState(false);
   const [fComment, setComment] = useState('');
+  const [selectedBuilding, setSelectedBuilding] = useState('');
 
   const handleChangeDtBegin = async (e: React.FormEvent<HTMLInputElement>) => {
     setDtBegin(e.currentTarget.value);
@@ -149,14 +150,14 @@ export function CreateOrderPage({ }: ICreateOrderPageProps) {
           </label>
           <label>
             Здание
-            <select className={classes.input} required>
+            <select className={classes.input} required onChange={(e) => setSelectedBuilding(e.target.value)}>
               <option selected disabled></option>
               {places.map(item => <option value={item.id}> {item.Building} </option>)}
             </select>
           </label>
           <label>
             Кабинет
-            <select className={classes.input} required>
+            <select className={classes.input} required >
               <option selected disabled></option>
               {cabinets.map(item => <option value={item.id}> {item.Cabinet} </option>)}
             </select>

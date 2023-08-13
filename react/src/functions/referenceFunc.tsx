@@ -34,15 +34,12 @@ let Dolgnosts = [
     crDolgnost(2, 'Инженер'),
 ]
 
+//let Dolgnosts: Array<IDolgnost>
+
 export async function getDolgnosts1() {
-    let headersSet = new Headers();
-    headersSet.append('Content-Type', 'application/json; charset=utf-8');
-    addAuthHeader(headersSet);
-    // RequestNoParams / IDolgListResponse
+
     let DolgListResponse = await fetch(API_PUBLIC_DATA + '/getDolgList', {
-        method: 'POST',
-        headers: headersSet,
-        //body: JSON.stringify()
+        method: 'POST'
     });
 
     if (DolgListResponse.status == 200) {
@@ -63,8 +60,8 @@ export function getDolgnosts() {
         console.log('результат запроса Должностей');
         console.log(result);
         Dolgnosts = result;
+        
     })
-
     return Dolgnosts
 }
 
