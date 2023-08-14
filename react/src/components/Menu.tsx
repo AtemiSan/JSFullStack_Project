@@ -37,28 +37,29 @@ export function Menu({ }: IMenuProps) {
   const dep = getDepartments1();
   const roles = getRoles1();
 
-  filters = {   // Для запросов от пользователя
-    userActive: (UserResponse?.role.idRole == UserRoles.USER) ? true : false,       // true - вернуть активные (status = на согласовании и согласованные + время окончания аренды ещё не истекло)
-    userRejected: false,     // true - вернуть отклонённые (status = отклонённые, отменённые + просроченные)
-    userNotDeleted: false,   // true - вернуть все, кроме удалённых
-    userDeletedOnly: false,  // true - вернуть все удалённые
-    userDeletedAdd: false,		// true - вернуть все (удалённые и не удалённые)
-    // Для запросов от согласующего
-    agreeActive: (UserResponse?.role.idRole == UserRoles.MANAGER) ? true : false,           // true - вернуть активные для согласования (status = на согласовании и не просроченные)
-    agreeRejected: false,         // true - вернуть отклонённые (status = отклонённые этим согласующим)
-    agreeAgreemented: false,		   // true - вернуть все согласованные (status = согласованные этим согласующим)
-    agreeNotDeleted: false,
-    agreeDeletedOnly: false,
-    agreeDeletedAdd: false,
-    // Для запросов от администратора
-    adminActive: (UserResponse?.role.idRole == UserRoles.MANAGER) ? true : false,          // true - вернуть активные для согласования (status = на согласовании и не просроченные)
-    adminRejected: false,        // true - вернуть отклонённые (status = отклонённые)
-    adminAgreemented: false,     // true - вернуть все согласованные (status = согласованные)
-    adminNotDeleted: false,
-    adminDeletedOnly: false,
-    adminDeletedAdd: false
-  };
-  async function getOrdersMenu(navig: string) {
+  async function getOrdersMenu(navig: string, idBtn: string) {
+    filters = {   // Для запросов от пользователя
+      userActive: (idBtn == 'lk') ? true : false,       //(UserResponse?.role.idRole == UserRoles.USER) ? true : false,       // true - вернуть активные (status = на согласовании и согласованные + время окончания аренды ещё не истекло)
+      userRejected: false,     // true - вернуть отклонённые (status = отклонённые, отменённые + просроченные)
+      userNotDeleted: false,   // true - вернуть все, кроме удалённых
+      userDeletedOnly: false,  // true - вернуть все удалённые
+      userDeletedAdd: false,		// true - вернуть все (удалённые и не удалённые)
+      // Для запросов от согласующего
+      agreeActive: (idBtn == 'agreement') ? true : false,       //(UserResponse?.role.idRole == UserRoles.MANAGER) ? true : false,           // true - вернуть активные для согласования (status = на согласовании и не просроченные)
+      agreeRejected: false,         // true - вернуть отклонённые (status = отклонённые этим согласующим)
+      agreeAgreemented: false,		   // true - вернуть все согласованные (status = согласованные этим согласующим)
+      agreeNotDeleted: false,
+      agreeDeletedOnly: false,
+      agreeDeletedAdd: false,
+      // Для запросов от администратора
+      adminActive: false, //(UserResponse?.role.idRole == UserRoles.MANAGER) ? true : false,          // true - вернуть активные для согласования (status = на согласовании и не просроченные)
+      adminRejected: false,        // true - вернуть отклонённые (status = отклонённые)
+      adminAgreemented: false,     // true - вернуть все согласованные (status = согласованные)
+      adminNotDeleted: false,
+      adminDeletedOnly: false,
+      adminDeletedAdd: false
+    };
+
     const orders = await getOrderList(filters);
     console.log(orders);
     navigate(navig)
@@ -75,7 +76,7 @@ export function Menu({ }: IMenuProps) {
             className={((UserResponse?.role.idRole == UserRoles.USER && (item.id == 'registration' || item.id == 'agreement')) ||
               (UserResponse?.role.idRole == UserRoles.MANAGER && (item.id == 'lk' || item.id == 'create_order' || item.id == 'registration'))
             ) ? classes.nodisplay : classes.btn}
-            onClick={() => { (item.id == 'lk' || item.id == 'agreement') ? getOrdersMenu(item.navigate) : navigate(item.navigate) }}>{item.text}</div>
+            onClick={() => { (item.id == 'lk' || item.id == 'agreement') ? getOrdersMenu(item.navigate, item.id) : navigate(item.navigate) }}>{item.text}</div>
         )}
       </div>
     </>
